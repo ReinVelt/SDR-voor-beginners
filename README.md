@@ -1,5 +1,9 @@
 # 📻 SDR — Software Defined Radio presentatie
 
+**Rein Velt · [Hackerspace Drenthe](https://hackerspacedrenthe.nl)**
+
+**Live:** https://reinvelt.github.io/SDR-voor-beginners/
+
 Interactieve [Reveal.js](https://revealjs.com)-presentatie (Nederlands) over Software Defined Radio,
 voor beginners én gevorderden. 66 slides met live canvas-animaties, interactieve
 visualisaties, echte DSP-graphics, gesynthetiseerde signaalgeluiden en een
