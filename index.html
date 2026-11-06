@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDR — Software Defined Radio | Van beginner tot gevorderde</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/monokai.css">
+
+  <style>
+    :root {
+      --r-heading-color: #4fc3f7;
+      --r-link-color: #ffb74d;
+      --r-main-font-size: 34px;
+    }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
+    .reveal .slides section { text-align: left; }
+    .reveal .slides section.center-slide { text-align: center; }
+    .reveal table { font-size: 0.72em; }
+    .reveal pre { width: 100%; font-size: 0.55em; }
+    .reveal code.inline { background: #333; padding: 0 .3em; border-radius: 4px; color: #ffcc80; }
+    .reveal ul li, .reveal ol li { margin: .3em 0; }
+    .badge {
+      display: inline-block; font-size: .5em; vertical-align: middle;
+      padding: .2em .6em; border-radius: 1em; margin-left: .5em;
+      background: #2e7d32; color: #fff;
+    }
+    .badge.adv { background: #c62828; }
+    .cols { display: flex; gap: 1.5em; }
+    .cols > div { flex: 1; }
+    .small { font-size: .7em; }
+    .tiny { font-size: .55em; color: #aaa; }
+    .warn { background: #4e342e; border-left: 6px solid #ff7043; padding: .4em .8em; border-radius: 4px; }
+    .ok { background: #1b3a1b; border-left: 6px solid #66bb6a; padding: .4em .8em; border-radius: 4px; }
+    svg text { font-family: sans-serif; }
+    .diagram { background: #111; border-radius: 10px; padding: 10px; width: 100%; }
+    .reveal h3.small { font-size: .85em; margin: .4em 0 .2em; }
+    .reveal canvas.anim { width: 100%; border-radius: 10px; background: #0a0f1a; display: block; }
+    .reveal img.shot { border-radius: 10px; max-width: 100%; }
+    .credit { font-size: .42em; color: #777; margin-top: .2em; }
+    .caption { font-size: .55em; color: #9fc; margin-top: .25em; }
+    /* auto-animate blokschema */
+    .chain { display: flex; align-items: center; gap: .45em; margin: 1em 0; }
+    .chain .box {
+      padding: .55em .5em; border-radius: 10px; text-align: center;
+      font-size: .62em; flex: 1; border: 2px solid #78909c; background: #37474f; color: #fff;
+    }
+    .chain .box.green { background: #1b5e20; border-color: #66bb6a; }
+    .chain .box.blue  { background: #0d47a1; border-color: #4fc3f7; flex: 3.2; }
+    .chain .arr { color: #ffb74d; font-size: 1.1em; }
+    /* interactieve tuner */
+    .tunerbar { display: flex; align-items: center; gap: .8em; margin-top: .5em; }
+    .tunerbar input[type=range] { flex: 1; accent-color: #4fc3f7; height: 1.2em; }
+    .tunerbar button {
+      background: #0d47a1; color: #fff; border: 2px solid #4fc3f7; border-radius: 8px;
+      font-size: .6em; padding: .4em .9em; cursor: pointer;
+    }
+    .tunerbar button.on { background: #1b5e20; border-color: #66bb6a; }
+    .reveal audio { width: 100%; }
+    .audiogrid { display: grid; grid-template-columns: 1fr 1fr; gap: .6em 1.2em; align-items: center; }
+    .audiogrid .lbl { font-size: .62em; }
+    /* didactiek */
+    .crumb { font-size: .5em; color: #789; margin-top: 1.4em; }
+    .crumb b { color: #4fc3f7; }
+    .keybox { background: #0d3321; border-left: 6px solid #66bb6a; padding: .45em .8em; border-radius: 6px; font-size: .68em; margin-top: .6em; }
+    .quiz-q { background: #1a2744; border-radius: 10px; padding: .5em .9em; margin-bottom: .5em; }
+    .freq-table td, .freq-table th { padding: .15em .5em !important; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============ 1. TITEL ============ -->
+<section class="center-slide">
+  <h1>📻 Software Defined Radio</h1>
+  <h3>Van radiogolven naar bits — voor beginners én gevorderden</h3>
+  <canvas class="anim" id="animTitle" width="960" height="150"></canvas>
+  <p class="small">Radio basics · SDR · Tools · Data-analyse · Demo's</p>
+  <p class="tiny">Gebruik <kbd>→</kbd> voor de volgende slide, <kbd>↓</kbd> voor verdieping, <kbd>Esc</kbd> voor overzicht, <kbd>S</kbd> voor sprekersnotities</p>
+  <aside class="notes">Welkom! Vraag wie er al eens een SDR-dongle heeft gebruikt — dat bepaalt het tempo.</aside>
+</section>
+
+<!-- ============ 2. AGENDA ============ -->
+<section>
+  <h2>Agenda</h2>
+  <ol>
+    <li><b>Radio basics</b> — golven, frequentie, modulatie <span class="badge">beginner</span></li>
+    <li><b>Wat is SDR?</b> — architectuur, IQ-sampling <span class="badge">beginner</span><span class="badge adv">gevorderd</span></li>
+    <li><b>Hardware</b> — RTL-SDR, HackRF, antennes</li>
+    <li><b>Software &amp; tools</b> — SDR++, GQRX, GNU Radio</li>
+    <li><b>Signalen decoderen</b> — ADS-B, POCSAG, weersatellieten</li>
+    <li><b>Data-analyse</b> — van IQ-bestand tot inzicht <span class="badge adv">gevorderd</span></li>
+    <li><b>Wetgeving</b> — wat mag (niet) in Nederland</li>
+    <li><b>Live demo's</b> 🎙️</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Wat kun je ná vandaag? 🎯</h2>
+  <ul>
+    <li class="fragment">🧠 <b>Begrijpen</b> hoe radio werkt: golven, modulatie, spectrum, decibel</li>
+    <li class="fragment">👀 <b>Herkennen</b> van signalen in een waterfall — en op het gehoor</li>
+    <li class="fragment">🛠️ <b>Zelf ontvangen</b>: van €35-dongle naar vliegtuigen, satellieten en sensoren</li>
+    <li class="fragment">📊 <b>Analyseren</b> van radiodata met Python en dashboards</li>
+    <li class="fragment">⚖️ <b>Weten wat mag</b> — en waar de grens ligt</li>
+  </ul>
+  <p class="small fragment" style="margin-top:1em">Beginner? Focus op de <span class="badge">groene</span> onderwerpen. Gevorderd? De <span class="badge adv">rode</span> geven verdieping — en onderweg checken we 3× of het landt. ✋</p>
+  <aside class="notes">Leerdoelen expliciet benoemen: het publiek weet dan waar het naartoe werkt en kan zelf prioriteren.</aside>
+</section>
+
+<!-- ============ DEEL 1: RADIO BASICS ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #0d47a1, #000)">
+  <h1>Deel 1</h1>
+  <h2>Radio Basics</h2>
+  <p class="small">Wat is een radiogolf eigenlijk?</p>
+  <p class="crumb"><b>Basics</b> · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+</section>
+
+<section>
+  <h2>Elektromagnetische golven</h2>
+  <ul>
+    <li>Radio = elektromagnetische straling, net als licht — alleen een <b>veel lagere frequentie</b></li>
+    <li>Een golf heeft drie eigenschappen die je kunt variëren:
+      <ul>
+        <li><b>Amplitude</b> — hoe sterk</li>
+        <li><b>Frequentie</b> — hoe snel hij trilt (Hz)</li>
+        <li><b>Fase</b> — waar in de cyclus hij zit</li>
+      </ul>
+    </li>
+    <li>Golflengte λ = c / f &nbsp;→&nbsp; 100 MHz ≈ 3 meter</li>
+  </ul>
+  <canvas class="anim" id="animWave" width="960" height="190"></canvas>
+</section>
+
+<section>
+  <h2>Radio ≈ geluid, maar dan sneller 🔊→📡</h2>
+  <p class="small">Vrijwel alles wat je intuïtief van geluid weet, vertaalt 1-op-1 naar radio:</p>
+  <table>
+    <tr><th>Geluid 🔊</th><th>Radio 📡</th></tr>
+    <tr class="fragment"><td>Toonhoogte</td><td>Frequentie (Hz → MHz/GHz)</td></tr>
+    <tr class="fragment"><td>Volume</td><td>Amplitude / signaalsterkte (dB)</td></tr>
+    <tr class="fragment"><td>Een orkest: alle instrumenten tegelijk</td><td>Het spectrum: alle zenders tegelijk in de lucht</td></tr>
+    <tr class="fragment"><td>Je oor pikt één stem eruit</td><td>Je ontvanger filtert één zender eruit</td></tr>
+    <tr class="fragment"><td>Equalizer-balkjes</td><td>Spectrum- / waterfall-weergave</td></tr>
+  </table>
+  <div class="keybox fragment">🔑 Onthoud: een SDR is een "microfoon voor radiogolven" + software die je oor nadoet. Dit beeld komt de hele presentatie terug.</div>
+  <aside class="notes">Analogie activeren: vraag de zaal eerst zelf de rechterkolom te raden.</aside>
+</section>
+
+<section>
+  <h2>Het radiospectrum</h2>
+  <table class="freq-table">
+    <tr><th>Band</th><th>Frequentie</th><th>Voorbeelden</th></tr>
+    <tr><td>LF/MF</td><td>30 kHz – 3 MHz</td><td>AM-omroep, tijdseinzenders (DCF77)</td></tr>
+    <tr><td>HF</td><td>3 – 30 MHz</td><td>Kortegolf, zendamateurs, wereldwijd DX</td></tr>
+    <tr><td>VHF</td><td>30 – 300 MHz</td><td>FM-omroep, luchtvaart, DAB+, marifoon</td></tr>
+    <tr><td>UHF</td><td>300 MHz – 3 GHz</td><td>PMR, ADS-B (1090 MHz), GSM, WiFi, GPS</td></tr>
+    <tr><td>SHF</td><td>3 – 30 GHz</td><td>Satelliet, radar, 5G mmWave</td></tr>
+  </table>
+  <p class="small">💡 Lagere frequentie = verder bereik &amp; buigt om obstakels; hogere frequentie = meer bandbreedte, maar zichtlijn nodig.</p>
+  <aside class="notes">HF kaatst via de ionosfeer de wereld rond — daarom hoor je 's nachts verre AM-stations.</aside>
+</section>
+
+<section>
+  <h2>Modulatie: informatie op een golf zetten</h2>
+  <canvas class="anim" id="animMod" width="960" height="320"></canvas>
+  <ul class="small">
+    <li class="fragment"><b>AM</b> — amplitude varieert (omroep, luchtvaart)</li>
+    <li class="fragment"><b>FM</b> — frequentie varieert (omroep, marifoon, PMR)</li>
+    <li class="fragment"><b>Digitaal</b> — FSK/PSK/QAM: bits als frequentie-, fase- of amplitudesprongen</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Decibel: de taal van radio</h2>
+  <ul>
+    <li>Signaalsterktes variëren enorm → logaritmische schaal</li>
+    <li><b>+3 dB</b> = ×2 vermogen, <b>+10 dB</b> = ×10 vermogen</li>
+    <li><b>dBm</b> = dB t.o.v. 1 milliwatt
+      <ul class="small">
+        <li>WiFi-router: ~+20 dBm (100 mW)</li>
+        <li>Ontvangen GPS-signaal: ~−130 dBm (0.0000000000001 mW!)</li>
+      </ul>
+    </li>
+    <li><b>SNR</b> (signaal-ruisverhouding): hoe ver je signaal boven de ruisvloer uitsteekt — dát bepaalt of je kunt decoderen</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🎛️ Speel: signaal vs. ruis</h2>
+  <canvas class="anim" id="animSNR" width="960" height="300"></canvas>
+  <div class="tunerbar">
+    <span class="small">SNR</span>
+    <input type="range" id="snrSlider" min="0" max="40" value="25">
+    <span id="snrLabel" class="small" style="min-width:3.5em;text-align:right">25 dB</span>
+  </div>
+  <p class="tiny">Schuif de signaalsterkte omlaag en zie wanneer decoderen onmogelijk wordt. Elke modulatie heeft een eigen minimum-SNR — daarom hoor je FM nog prima waar digitale TV al lang is weggevallen.</p>
+</section>
+
+<section>
+  <h2>✋ Even checken #1</h2>
+  <p class="quiz-q">De NOAA-weersatelliet zendt op <b>137 MHz</b>. Hoe lang is één golf — en hoe groot wordt je antenne?</p>
+  <ul>
+    <li class="fragment">λ = c / f = 300 / 137 ≈ <b>2,2 meter</b></li>
+    <li class="fragment">Een λ/4-antennepoot is dus ≈ <b>55 cm</b> — daarom is zo'n V-dipool best groot</li>
+    <li class="fragment">En ADS-B op 1090 MHz? λ ≈ 27 cm → antennetje van ~7 cm. <b>Hogere frequentie = kleinere antenne</b></li>
+  </ul>
+  <div class="keybox fragment">🔑 Vuistregel om te onthouden: <b>λ in meters ≈ 300 / f in MHz</b></div>
+  <aside class="notes">Laat de zaal eerst schatten voordat je de fragments toont.</aside>
+  <aside class="notes">Belangrijk voor later: in waterfall-weergaves kijk je altijd naar dB-schalen.</aside>
+</section>
+
+<!-- ============ DEEL 2: SDR ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #1b5e20, #000)">
+  <h1>Deel 2</h1>
+  <h2>Wat is Software Defined Radio?</h2>
+  <p class="crumb">Basics · <b>SDR</b> · Hardware · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+</section>
+
+<section data-auto-animate>
+  <h2 data-id="htitle">Klassieke radio</h2>
+  <p class="small" data-id="hsub">Elke functie = een eigen stuk hardware:</p>
+  <div class="chain">
+    <div class="box" data-id="b1">Filter</div><span class="arr" data-id="a1">➜</span>
+    <div class="box" data-id="b2">Mixer</div><span class="arr" data-id="a2">➜</span>
+    <div class="box" data-id="b3">IF-filter</div><span class="arr" data-id="a3">➜</span>
+    <div class="box" data-id="b4">Demodulator</div><span class="arr" data-id="a4">➜</span>
+    <div class="box" data-id="b5">Audio</div>
+  </div>
+  <ul class="small">
+    <li>Nieuw protocol of andere band? → nieuwe hardware, soldeerbout erbij</li>
+    <li>Eén apparaat = één functie</li>
+  </ul>
+</section>
+
+<section data-auto-animate>
+  <h2 data-id="htitle">…en nu als SDR</h2>
+  <p class="small" data-id="hsub">Digitaliseer zo vroeg mogelijk — de rest wordt software:</p>
+  <div class="chain">
+    <div class="box green" data-id="b1">Tuner /<br>versterker</div><span class="arr" data-id="a1">➜</span>
+    <div class="box green" data-id="b2">ADC</div><span class="arr" data-id="a2">➜</span>
+    <div class="box blue" data-id="b3">💻 SOFTWARE<br><span style="font-size:.75em">filteren · demoduleren · decoderen · analyseren</span></div>
+  </div>
+  <p class="fragment"><b>Eén apparaat → duizend radio's.</b> Nieuw protocol? Update de software, niet de soldeerbout.</p>
+</section>
+
+<section>
+  <h2>Waarom is SDR zo'n gamechanger?</h2>
+  <div class="cols">
+    <div>
+      <h3 class="small">Vroeger</h3>
+      <ul class="small">
+        <li>Scanner: €300+, vaste modi</li>
+        <li>Spectrumanalyzer: €10.000+</li>
+        <li>Per protocol nieuwe hardware</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="small">Nu</h3>
+      <ul class="small">
+        <li>RTL-SDR dongle: <b>~€35</b></li>
+        <li>Volledig spectrum zichtbaar als waterfall</li>
+        <li>Gratis open-source software voor honderden protocollen</li>
+        <li>Opnemen en later (her)analyseren</li>
+      </ul>
+    </div>
+  </div>
+  <p class="ok small">SDR democratiseerde radio-onderzoek: hobbyisten doen nu dingen die vroeger alleen labs konden.</p>
+</section>
+
+<section>
+  <h2>IQ-sampling <span class="badge adv">gevorderd</span></h2>
+  <ul class="small">
+    <li>De SDR mengt het antennesignaal naar laag-frequent en bemonstert <b>twee kanalen</b>:
+      <b>I</b> (in-phase) en <b>Q</b> (quadrature, 90° verschoven)</li>
+    <li>Samen vormen ze een <b>complex getal</b> I + jQ per sample</li>
+    <li>Hiermee ken je amplitude én fase → élke modulatie is in software te demoduleren</li>
+    <li>Negatieve frequenties worden onderscheidbaar → bandbreedte = samplerate</li>
+  </ul>
+  <canvas class="anim" id="animIQ" width="960" height="260"></canvas>
+  <div class="keybox">🔑 Te veel wiskunde? Onthoud alleen dit: <b>IQ-samples zijn de ruwe grondstof van SDR</b> — waterfall, audio en decoders worden er allemaal uit berekend.</div>
+</section>
+
+<section>
+  <h2>Digitale modulatie in het echt</h2>
+  <p class="small">Plot de IQ-samples op symboolmomenten → <b>constellatiediagram</b>. Elke "wolk" = één symbool; hoe meer punten, hoe meer bits per symbool (en hoe gevoeliger voor ruis):</p>
+  <img class="shot" src="assets/constellations.png" alt="BPSK, QPSK en 16-QAM constellaties">
+  <ul class="small">
+    <li class="fragment">WiFi/5G gebruiken adaptief t/m 1024-QAM — alleen bij hoge SNR</li>
+    <li class="fragment">In GQRX/SDR++ of GNU Radio zie je deze plots live van echte signalen</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🎛️ Draai aan de ruis</h2>
+  <canvas class="anim" id="animConst" width="960" height="300"></canvas>
+  <div class="tunerbar">
+    <span class="small">SNR</span>
+    <input type="range" id="constSlider" min="2" max="28" value="18">
+    <span id="constLabel" class="small" style="min-width:3.5em;text-align:right">18 dB</span>
+  </div>
+  <p class="tiny">QPSK live: elk puntje is een ontvangen symbool. Wordt een punt <span style="color:#ef5350">rood</span>, dan belandde hij in het verkeerde kwadrant = <b>bitfout</b>. Dít is waarom je modem terugschakelt bij slecht signaal.</p>
+</section>
+
+<section>
+  <h2>Nyquist &amp; samplerate <span class="badge adv">gevorderd</span></h2>
+  <ul>
+    <li><b>Nyquist:</b> om een signaal te reconstrueren moet je ≥ 2× de hoogste frequentie samplen</li>
+    <li>Met complexe IQ-samples: <b>bandbreedte = samplerate</b>
+      <ul class="small"><li>RTL-SDR @ 2.4 MS/s → 2.4 MHz spectrum in beeld</li>
+      <li>HackRF @ 20 MS/s → 20 MHz spectrum</li></ul>
+    </li>
+    <li>Te weinig samplerate → <b>aliasing</b>: signalen "vouwen" terug en verschijnen op de verkeerde plek</li>
+    <li>Praktijk: 8-bit samples @ 2.4 MS/s = ~4.8 MB/s aan data. IQ-opnames worden snel <b>groot</b>!</li>
+  </ul>
+  <div class="keybox">🔑 Simpel onthouden: <b>samplerate = hoeveel MHz spectrum je tegelijk ziet</b>.</div>
+</section>
+
+<section>
+  <h2>🎛️ Zie aliasing gebeuren</h2>
+  <canvas class="anim" id="animAlias" width="960" height="300"></canvas>
+  <div class="tunerbar">
+    <span class="small">samplerate</span>
+    <input type="range" id="aliasSlider" min="6" max="48" value="44">
+    <span id="aliasLabel" class="small" style="min-width:8.5em;text-align:right"></span>
+  </div>
+  <p class="tiny">Blauw = het echte signaal (10 cycli) · stippen = jouw samples · oranje = wat jouw SDR ervan reconstrueert. Zak onder 2× de signaalfrequentie en er verschijnt een <b>spook-signaal</b> op de verkeerde frequentie.</p>
+</section>
+
+<section>
+  <h2>✋ Even checken #2</h2>
+  <p class="quiz-q">Je RTL-SDR staat afgestemd op <b>100 MHz</b> met samplerate <b>2.4 MS/s</b>.</p>
+  <ul>
+    <li>Welk stuk spectrum zie je in je waterfall? <span class="fragment"><b>98.8 – 101.2 MHz</b> (bandbreedte = samplerate)</span></li>
+    <li class="fragment">Er zendt iets op 101.5 MHz. Zie je dat? <span class="fragment"><b>Nee</b> — valt buiten de band. Hertunen dus!</span></li>
+    <li class="fragment">Een uur IQ opnemen kost ~<span class="fragment"><b>17 GB</b> (4.8 MB/s × 3600 s) — daarom neem je kort en gericht op</span></li>
+  </ul>
+  <aside class="notes">Vraag 3 verrast meestal — goede opstap naar 'waarom SigMF en gericht opnemen'.</aside>
+</section>
+
+<!-- ============ DEEL 3: HARDWARE ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #e65100, #000)">
+  <h1>Deel 3</h1>
+  <h2>Hardware</h2>
+  <p class="small">RTL-SDR · HackRF · antennes</p>
+  <p class="crumb">Basics · SDR · <b>Hardware</b> · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+</section>
+
+<section>
+  <h2>RTL-SDR: de €35 wonderdongle</h2>
+  <div class="cols">
+    <div>
+      <ul class="small">
+        <li>Ooit: DVB-T tv-stick. Hack (2012): chip levert ruwe IQ-samples!</li>
+        <li><b>RTL-SDR Blog V3/V4</b>: de facto standaard</li>
+        <li>Bereik: <b>500 kHz – 1.7 GHz</b></li>
+        <li>Samplerate: tot 2.4 MS/s stabiel, 8-bit</li>
+        <li>Alleen <b>ontvangen</b> (RX)</li>
+        <li>V3+: TCXO (stabiele klok), bias-tee, direct sampling voor HF</li>
+      </ul>
+    </div>
+    <div>
+      <img class="shot" src="assets/rtlsdr_photo.jpg" alt="RTL-SDR dongle" style="max-height:215px">
+      <p class="credit">Foto: Joeceads, CC BY-SA 4.0, Wikimedia Commons</p>
+      <h3 class="small">Wat kun je ermee?</h3>
+      <ul class="small">
+        <li>FM/DAB+ · ADS-B vliegtuigen · weersatellieten</li>
+        <li>Pagers, sensors, meteoballonnen, marifoon</li>
+        <li>ISS en amateursatellieten</li>
+      </ul>
+    </div>
+  </div>
+  <p class="tiny">Koop bij voorkeur een origineel (rtl-sdr.com) — kloons hebben vaak drift en opwarmproblemen.</p>
+</section>
+
+<section>
+  <h2>HackRF One: ook zenden <span class="badge adv">gevorderd</span></h2>
+  <div class="cols">
+    <div>
+      <ul class="small">
+        <li>Bereik: <b>1 MHz – 6 GHz</b></li>
+        <li>Tot 20 MS/s, 8-bit</li>
+        <li><b>Half-duplex TX én RX</b> (~€300)</li>
+        <li>Open hardware (Great Scott Gadgets)</li>
+        <li>Portapack-addon: standalone gebruik</li>
+      </ul>
+    </div>
+    <div>
+      <img class="shot" src="assets/hackrf_photo.jpg" alt="HackRF One" style="max-height:200px">
+      <p class="credit">Foto: Gareth Halfacree, CC BY 2.0, Wikimedia Commons</p>
+      <h3 class="small">Alternatieven</h3>
+      <ul class="small">
+        <li><b>Airspy</b> 12-bit · <b>SDRplay</b> 14-bit · <b>PlutoSDR</b> full-duplex · <b>USRP</b> pro</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warn small">⚠️ Zenden zonder vergunning is in NL <b>illegaal</b> — ook heel kort, ook op laag vermogen. Gebruik een dummy load of kabel voor experimenten. Meer hierover bij wetgeving.</div>
+</section>
+
+<section>
+  <h2>Antennes: de helft van je succes</h2>
+  <ul class="small">
+    <li>Een slechte antenne met dure SDR &lt; goede antenne met goedkope SDR</li>
+    <li>Vuistregel: antenne resoneert bij <b>λ/4</b> of <b>λ/2</b> van je doelfrequentie</li>
+  </ul>
+  <div class="cols">
+    <div style="flex:2.2">
+      <table>
+        <tr><th>Type</th><th>Goed voor</th><th>Opmerking</th></tr>
+        <tr><td>Telescoop-dipool</td><td>Alles (breedband)</td><td>Zit bij RTL-SDR kit</td></tr>
+        <tr><td>Discone</td><td>Scannen 25 MHz–1.3 GHz</td><td>Breedband, geen gain</td></tr>
+        <tr><td>Colineair / GP</td><td>ADS-B 1090 MHz</td><td>Veel gain op één band</td></tr>
+        <tr><td>V-dipool / QFH</td><td>Weersat. 137 MHz</td><td>Omhoog gericht, circulair (QFH)</td></tr>
+        <tr><td>Longwire / mini-whip</td><td>HF kortegolf</td><td>Lang draad buiten</td></tr>
+      </table>
+      <p class="tiny">Tips: buiten &gt; binnen, hoog &gt; laag, korte goede coax &gt; lange slechte. LNA dicht bij de antenne helpt bij satellieten.</p>
+    </div>
+    <div style="flex:1">
+      <img class="shot" src="assets/qfh_antenna.jpg" alt="QFH antenne" style="max-height:385px">
+      <p class="credit">QFH-antenne voor 137 MHz weersatellieten — Karsten Lehmann, CC BY-SA 4.0</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEEL 4: SOFTWARE & TOOLS ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #4a148c, #000)">
+  <h1>Deel 4</h1>
+  <h2>Software &amp; tools</h2>
+  <p class="crumb">Basics · SDR · Hardware · <b>Tools</b> · Decoderen · Data · Wetgeving · Demo's</p>
+</section>
+
+<section>
+  <h2>Eerst even: wat doet een FFT?</h2>
+  <ul class="small">
+    <li class="fragment">De SDR levert alleen <b>samples in de tijd</b> — een eindeloze rij getallen</li>
+    <li class="fragment">De <b>FFT</b> (Fast Fourier Transform) werkt als een <b>prisma</b>: hij splitst het signaal in de frequenties waaruit het bestaat</li>
+    <li class="fragment">1 FFT = 1 momentopname van het spectrum = <b>1 regel van de waterfall</b></li>
+    <li class="fragment">Duizenden FFT's onder elkaar plakken = de waterfall die je zo ziet</li>
+  </ul>
+  <canvas class="anim" id="animFFT" width="960" height="280"></canvas>
+  <div class="tunerbar">
+    <span class="small">toon 2</span>
+    <input type="range" id="fftSlider" min="4" max="28" value="14">
+    <span class="small" style="min-width:12em;text-align:right">← verschuif en zie de piek mee</span>
+  </div>
+  <div class="keybox fragment">🔑 Zelfde truc als je oor: van trillingen (tijd) naar tonen (frequentie). Links het signaal, rechts een <b>echte DFT, live berekend</b>.</div>
+</section>
+
+<section>
+  <h2>Je eerste waterfall 🌊</h2>
+  <ul class="small">
+    <li><b>SDR++ / SDRSharp / GQRX</b>: dé startpunten — tunen, luisteren, kijken</li>
+    <li>X-as = frequentie, Y-as = tijd, kleur = signaalsterkte (dB)</li>
+    <li>Je <i>ziet</i> signalen voordat je ze hoort: elke modulatie heeft een eigen "vingerafdruk"</li>
+  </ul>
+  <canvas class="anim" id="animWf" width="960" height="330"></canvas>
+  <p class="caption">▲ live gesimuleerde waterfall: smalle FM-draaggolf · breedband FM · pager-bursts · frequency hopper</p>
+</section>
+
+<section>
+  <h2>Een echte 2.4 MHz opname</h2>
+  <img class="shot" src="assets/waterfall_real.png" alt="Waterfall van IQ-opname" style="max-height:330px;width:auto;display:block;margin:0 auto">
+  <img class="shot fragment" src="assets/spectrum_real.png" alt="Gemiddeld spectrum" style="max-height:180px;width:auto;display:block;margin:.3em auto 0">
+  <p class="tiny">Gegenereerd uit IQ-samples met NumPy — exact dezelfde FFT-pipeline als SDR++ gebruikt.</p>
+</section>
+
+<section>
+  <h2>Hoe klinkt het spectrum? 🎧</h2>
+  <p class="small">Elke modulatie heeft ook een eigen <i>geluid</i> — na een tijdje herken je ze op het gehoor (allemaal hier gesynthetiseerd met NumPy):</p>
+  <div class="audiogrid">
+    <div class="lbl">📡 <b>Morse (CW)</b> — "CQ CQ DE PA0SDR K", 600 Hz</div>
+    <audio controls preload="none" src="assets/morse.wav"></audio>
+    <div class="lbl">📟 <b>POCSAG pager-bursts</b> — FSK, let op de preamble</div>
+    <audio controls preload="none" src="assets/pocsag.wav"></audio>
+    <div class="lbl">🛰️ <b>NOAA APT</b> — het "tik-tok" van een weersatelliet</div>
+    <audio controls preload="none" src="assets/apt.wav"></audio>
+    <div class="lbl">📻 <b>FM afstemmen</b> — ruis → zender → ruis</div>
+    <audio controls preload="none" src="assets/fm_tuning.wav"></audio>
+  </div>
+  <p class="tiny">Meer echte voorbeelden: sigidwiki.com heeft opnames van honderden signaalsoorten.</p>
+</section>
+
+<section>
+  <h2>🎛️ Draai zelf aan de knop</h2>
+  <canvas class="anim" id="animTuner" width="960" height="300"></canvas>
+  <div class="tunerbar">
+    <button id="tunerAudioBtn">🔊 audio aan</button>
+    <input type="range" id="tunerFreq" min="0" max="1000" value="80">
+    <span id="tunerLabel" class="small" style="min-width:4.5em;text-align:right">88.0 MHz</span>
+  </div>
+  <p class="tiny">Sleep de schuif over de band: vind de morse-baken, de FM-muziekzender en de pager. Net naast de zender? Dan hoor je hem vervormd door de ruis — precies zoals in het echt.</p>
+  <aside class="notes">Laat eerst het spectrum zien, zet dan audio aan en laat iemand uit de zaal de zenders zoeken.</aside>
+</section>
+
+<section>
+  <h2>Het tool-landschap</h2>
+  <table class="small">
+    <tr><th>Tool</th><th>Platform</th><th>Waarvoor</th></tr>
+    <tr><td><b>SDR++</b></td><td>Win/Linux/Mac</td><td>Moderne allround ontvanger, plugins</td></tr>
+    <tr><td><b>SDRSharp (SDR#)</b></td><td>Windows</td><td>Klassieker, veel plugins</td></tr>
+    <tr><td><b>GQRX</b></td><td>Linux/Mac</td><td>Eenvoudige ontvanger op GNU Radio-basis</td></tr>
+    <tr><td><b>GNU Radio</b></td><td>alle</td><td>Visueel DSP-bouwpakket — zie volgende slides</td></tr>
+    <tr><td><b>SigDigger / inspectrum</b></td><td>Linux</td><td>Signaalinspectie &amp; reverse engineering</td></tr>
+    <tr><td><b>Universal Radio Hacker</b></td><td>alle</td><td>Protocol reverse engineering (GUI)</td></tr>
+    <tr><td><b>rtl_433</b></td><td>alle (CLI)</td><td>200+ sensoren/weerstations decoderen</td></tr>
+    <tr><td><b>dump1090 / readsb</b></td><td>alle (CLI)</td><td>ADS-B vliegtuigtracking</td></tr>
+    <tr><td><b>SatDump</b></td><td>alle</td><td>Weersatellieten (NOAA, Meteor, GOES…)</td></tr>
+    <tr><td><b>multimon-ng</b></td><td>alle (CLI)</td><td>POCSAG, AFSK, DTMF, …</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>GNU Radio: DSP als blokkendoos</h2>
+  <ul class="small">
+    <li>Open-source framework: bouw je radio als <b>flowgraph</b> van blokken</li>
+    <li><b>GNU Radio Companion (GRC)</b>: visuele editor → genereert Python</li>
+    <li>Elk blok bewerkt een stroom samples: filter, mixer, demodulator, decoder…</li>
+  </ul>
+  <svg class="diagram" viewBox="0 0 900 180">
+    <g font-size="16" fill="#fff" text-anchor="middle">
+      <g class="fragment" data-fragment-index="1">
+        <rect x="20" y="55" width="140" height="70" rx="8" fill="#4a148c" stroke="#ba68c8"/>
+        <text x="90" y="85">RTL-SDR</text><text x="90" y="107" font-size="13">Source · 2.4 MS/s</text>
+      </g>
+      <g class="fragment" data-fragment-index="2">
+        <line x1="160" y1="90" x2="196" y2="90" stroke="#ffb74d" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <rect x="200" y="55" width="150" height="70" rx="8" fill="#1a237e" stroke="#7986cb"/>
+        <text x="275" y="85">Low-pass filter</text><text x="275" y="107" font-size="13">decimatie ↓10</text>
+      </g>
+      <g class="fragment" data-fragment-index="3">
+        <line x1="350" y1="90" x2="386" y2="90" stroke="#ffb74d" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <rect x="390" y="55" width="150" height="70" rx="8" fill="#1a237e" stroke="#7986cb"/>
+        <text x="465" y="85">WBFM demod</text><text x="465" y="107" font-size="13">240k → 48k</text>
+      </g>
+      <g class="fragment" data-fragment-index="4">
+        <line x1="540" y1="90" x2="576" y2="90" stroke="#ffb74d" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <rect x="580" y="55" width="130" height="70" rx="8" fill="#1a237e" stroke="#7986cb"/>
+        <text x="645" y="85">Resampler</text><text x="645" y="107" font-size="13">48 kHz</text>
+      </g>
+      <g class="fragment" data-fragment-index="5">
+        <line x1="710" y1="90" x2="746" y2="90" stroke="#ffb74d" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <rect x="750" y="55" width="130" height="70" rx="8" fill="#1b5e20" stroke="#81c784"/>
+        <text x="815" y="85">Audio Sink</text><text x="815" y="107" font-size="13">🔊 speakers</text>
+      </g>
+    </g>
+    <defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ffb74d"/></marker></defs>
+    <text class="fragment" data-fragment-index="5" x="450" y="165" fill="#aaa" font-size="17" text-anchor="middle">↑ een complete FM-radio in 5 blokken</text>
+  </svg>
+</section>
+
+<section>
+  <h2>GNU Radio in de praktijk <span class="badge adv">gevorderd</span></h2>
+  <ul class="small">
+    <li>GRC genereert Python — je kunt alles ook scripten:</li>
+  </ul>
+  <pre><code class="language-python">from gnuradio import gr, blocks, analog, filter, audio
+import osmosdr
+
+class FMRadio(gr.top_block):
+    def __init__(self, freq=100.7e6):
+        gr.top_block.__init__(self)
+        src = osmosdr.source()                     # RTL-SDR bron
+        src.set_sample_rate(2.4e6)
+        src.set_center_freq(freq)
+        lpf = filter.fir_filter_ccf(10,            # decimatie 2.4M -> 240k
+              filter.firdes.low_pass(1, 2.4e6, 100e3, 10e3))
+        demod = analog.wfm_rcv(quad_rate=240e3, audio_decimation=5)
+        snd = audio.sink(48000)
+        self.connect(src, lpf, demod, snd)
+
+FMRadio().run()</code></pre>
+  <ul class="small">
+    <li>Eigen blokken schrijven in Python of C++ (performance)</li>
+    <li>Ook zonder hardware: <code class="inline">File Source</code> met opgenomen IQ-data</li>
+  </ul>
+</section>
+
+<!-- ============ DEEL 5: SIGNALEN DECODEREN ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #b71c1c, #000)">
+  <h1>Deel 5</h1>
+  <h2>Signalen decoderen</h2>
+  <p class="small">ADS-B · POCSAG · weersatellieten · sensoren</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · <b>Decoderen</b> · Data · Wetgeving · Demo's</p>
+</section>
+
+<section>
+  <h2>ADS-B: vliegtuigen volgen ✈️</h2>
+  <div class="cols">
+    <div>
+      <ul class="small">
+        <li>Vliegtuigen zenden continu positie, hoogte, snelheid, callsign op <b>1090 MHz</b></li>
+        <li>Modulatie: PPM, 1 Mbit/s, ongecodeerd — vrij te ontvangen</li>
+        <li>Bereik: 200–400 km met dakantenne (zichtlijn!)</li>
+      </ul>
+      <pre><code class="language-bash"># decoder starten + webkaart
+dump1090 --interactive
+# of modern:
+readsb --device-type rtlsdr \
+       --net --write-json /run/readsb</code></pre>
+    </div>
+    <div>
+      <ul class="small">
+        <li>Eigen FlightRadar bouwen: feed naar FR24 / ADSBexchange → gratis premium-account</li>
+        <li>Data = JSON → perfect voor eigen analyses (zie deel 6)</li>
+        <li>Verwant: <b>ACARS</b> (131.725 MHz), <b>VDL2</b>: berichten van/naar cockpit</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Zo ziet jouw ontvangst eruit 🛩️</h2>
+  <canvas class="anim" id="animRadar" width="960" height="330"></canvas>
+  <p class="tiny">Links: vliegtuigen die jouw antenne hoort (ring = 100/200 km). Rechts: de ruwe Mode-S berichten zoals dump1090 ze decodeert — elk vliegtuig zendt er ~2 per seconde.</p>
+</section>
+
+<section>
+  <h2>POCSAG: pagers leven nog 📟</h2>
+  <ul class="small">
+    <li>Pager-protocol uit 1982, nog volop in gebruik (ziekenhuizen, brandweer)</li>
+    <li>In NL: <b>P2000</b> op 169.65 MHz — alarmeringen van hulpdiensten (FLEX-protocol)</li>
+    <li>FSK, 512/1200/2400 baud — triviaal te decoderen:</li>
+  </ul>
+  <pre><code class="language-bash"># POCSAG decoderen met rtl_fm + multimon-ng
+rtl_fm -f 169.65M -s 22050 | \
+  multimon-ng -t raw -a POCSAG512 -a POCSAG1200 -a FLEX -</code></pre>
+  <div class="cols" style="align-items:center">
+    <div style="flex:1.4"><p class="small" style="margin:0">🎧 Zo klinkt een pager-burst:</p></div>
+    <div style="flex:2"><audio controls preload="none" src="assets/pocsag.wav"></audio></div>
+  </div>
+  <div class="warn small">⚠️ Ontvangen mag, maar berichten bevatten soms persoonsgegevens.
+  Publiceren of delen daarvan kan strafbaar zijn (AVG + Telecommunicatiewet, afluisterverbod art. 161 Sr).
+  Luisteren voor eigen studie: oké. Verspreiden: niet doen.</div>
+</section>
+
+<section>
+  <h2>Weersatellieten: beelden uit de ruimte 🛰️</h2>
+  <div class="cols">
+    <div>
+      <ul class="small">
+        <li><b>NOAA 15/18/19</b> — 137 MHz, APT: analoog beeld, te decoderen met geluidskaart-niveau DSP</li>
+        <li><b>Meteor M2</b> — 137 MHz, LRPT: digitaal, hogere resolutie</li>
+        <li>Polaire baan: 2–4 passes per dag, ±12 min zichtbaar</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="small">Workflow</h3>
+      <ol class="small">
+        <li>Pass voorspellen (gpredict, n2yo.com)</li>
+        <li>V-dipool of QFH-antenne richting hemel</li>
+        <li>Opnemen + decoderen met <b>SatDump</b></li>
+        <li>→ eigen satellietfoto van Europa!</li>
+      </ol>
+    </div>
+  </div>
+  <p class="small">🚀 Gevorderd: <b>GOES/EUMETSAT</b> geostationair met schotel + LNA, <b>ISS</b> SSTV-events, amateursatellieten (FM-repeaters in de ruimte).</p>
+</section>
+
+<section>
+  <h2>Hoe werkt zo'n pass? 🛰️</h2>
+  <canvas class="anim" id="animPass" width="960" height="330"></canvas>
+  <p class="tiny">De satelliet vliegt in ~100 minuten rond de aarde; jij hoort hem alleen als hij boven jouw horizon komt (groene boog). De elevatiecurve rechts bepaalt je plan: hoe hoger de piek, hoe beter het beeld.</p>
+</section>
+
+<section>
+  <h2>Echt ontvangen: NOAA 19 🛰️</h2>
+  <div class="cols">
+    <div style="flex:1.4">
+      <img class="shot" src="assets/noaa19_apt.jpg" alt="Echte NOAA 19 APT-ontvangst" style="max-height:480px">
+      <p class="credit">NOAA 19, 18 juni 2021, APT op 137.100 MHz — public domain (NOAA), via Wikimedia Commons</p>
+    </div>
+    <div>
+      <ul class="small">
+        <li class="fragment">Links: zichtbaar licht, rechts: infrarood</li>
+        <li class="fragment">De verticale streeppatronen = sync-pulsen, zo lijnt de decoder elke beeldlijn uit</li>
+        <li class="fragment">Dit ontvang je al met een RTL-SDR + zelfgebouwde V-dipool van ~€5 aan draad</li>
+      </ul>
+      <p class="small fragment" style="margin-bottom:.2em">🎧 Zo klinkt APT tijdens een pass:</p>
+      <audio class="fragment" controls preload="none" src="assets/apt.wav" style="width:100%"></audio>
+      <img class="shot fragment" src="assets/apt_sim.png" alt="APT-formaat uitleg">
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>rtl_433: het IoT om je heen</h2>
+  <ul class="small">
+    <li>433/868 MHz ISM-band: weerstations, deurbellen, TPMS (bandenspanning), afstandsbedieningen, energiemeters…</li>
+    <li><code class="inline">rtl_433</code> kent <b>250+ apparaatprotocollen</b> out of the box:</li>
+  </ul>
+  <pre><code class="language-bash">rtl_433 -f 433.92M -F json | jq .
+{
+  "time": "2025-11-06 19:04:12",
+  "model": "Nexus-TH",
+  "id": 42,
+  "temperature_C": 18.4,
+  "humidity": 61
+}</code></pre>
+  <ul class="small">
+    <li>Output naar JSON/MQTT → direct in Home Assistant of eigen database</li>
+    <li>Leuke oefening: welke apparaten in jouw huis zenden stiekem van alles uit?</li>
+  </ul>
+</section>
+
+<!-- Frequentie-safari: verticale stack (↓) -->
+<section>
+<section>
+  <h2>📻 Frequentie-safari NL</h2>
+  <p class="small">De mooiste plekken op de band om vanavond nog af te luisteren — gesorteerd van laag naar hoog:</p>
+  <svg class="diagram" viewBox="0 0 900 190">
+    <line x1="40" y1="110" x2="860" y2="110" stroke="#4fc3f7" stroke-width="3"/>
+    <g font-size="14" fill="#789" text-anchor="middle">
+      <text x="60" y="140">100 kHz</text><text x="260" y="140">1 MHz</text>
+      <text x="460" y="140">30 MHz</text><text x="640" y="140">300 MHz</text><text x="840" y="140">2 GHz</text>
+    </g>
+    <g font-size="15" text-anchor="middle">
+      <g fill="#ffb74d"><circle cx="75" cy="110" r="6"/><text x="75" y="85">DCF77</text></g>
+      <g fill="#66bb6a"><circle cx="250" cy="110" r="6"/><text x="250" y="85">AM-DX</text></g>
+      <g fill="#ba68c8"><circle cx="330" cy="110" r="6"/><text x="330" y="60">Buzzer 👻</text></g>
+      <g fill="#4fc3f7"><circle cx="400" cy="110" r="6"/><text x="400" y="85">amateurs HF</text></g>
+      <g fill="#ef5350"><circle cx="540" cy="110" r="6"/><text x="508" y="36">luchtvaart</text></g>
+      <g fill="#66bb6a"><circle cx="575" cy="110" r="6"/><text x="578" y="85">NOAA · ISS</text></g>
+      <g fill="#ffb74d"><circle cx="615" cy="110" r="6"/><text x="622" y="60">marifoon · P2000</text></g>
+      <g fill="#ba68c8"><circle cx="700" cy="110" r="6"/><text x="700" y="85">433/446/sondes</text></g>
+      <g fill="#ef5350"><circle cx="800" cy="110" r="6"/><text x="800" y="60">ADS-B</text></g>
+    </g>
+    <text x="450" y="180" fill="#9fc" font-size="17" text-anchor="middle">druk op ↓ voor het complete luistermenu per band</text>
+  </svg>
+  <aside class="notes">Verticale slides: HF, VHF, UHF. Vraag de zaal wat ze het spannendst vinden klinken.</aside>
+</section>
+
+<section>
+  <h3>Kortegolf &amp; lager <span class="badge">longwire / mini-whip + direct sampling</span></h3>
+  <table class="freq-table small">
+    <tr><th>Frequentie</th><th>Wat</th><th>Waarom leuk</th></tr>
+    <tr><td>77.5 kHz</td><td><b>DCF77</b> tijdsein</td><td>Dit signaal zet al je "atoomklokken" gelijk</td></tr>
+    <tr><td>518 kHz</td><td><b>NAVTEX</b></td><td>Scheepvaartberichten als tekst te decoderen</td></tr>
+    <tr><td>526–1602 kHz</td><td>AM-omroep</td><td>'s Avonds hoor je heel Europa (ionosfeer!)</td></tr>
+    <tr><td>3.6 / 7.1 / 14.2 MHz</td><td>Amateurs 80/40/20 m</td><td>NL-rondes 's avonds · overdag wereldwijde DX (SSB)</td></tr>
+    <tr><td>4625 kHz</td><td><b>UVB-76 "The Buzzer"</b> 👻</td><td>Mysterieuze Russische zoemer, al 40+ jaar</td></tr>
+    <tr><td>5505 kHz</td><td>Shannon VOLMET</td><td>Luchtvaartweer, doorlopend voorgelezen</td></tr>
+    <tr><td>11175 kHz</td><td>US HFGCS</td><td>Af en toe cryptische militaire "EAM"-berichten</td></tr>
+    <tr><td>27.555 MHz</td><td>CB / freeband</td><td>Bij goede condities half Europa te horen</td></tr>
+  </table>
+  <p class="tiny">💡 RTL-SDR V3/V4: zet <i>direct sampling (Q-branch)</i> aan voor alles onder 24 MHz. Of luister via een WebSDR (websdr.ewi.utwente.nl!).</p>
+</section>
+
+<section>
+  <h3>VHF <span class="badge">de gouden band voor beginners</span></h3>
+  <table class="freq-table small">
+    <tr><th>Frequentie</th><th>Wat</th><th>Waarom leuk</th></tr>
+    <tr><td>87.5–108 MHz</td><td>FM-omroep</td><td>Je eerste succes — altijd raak</td></tr>
+    <tr><td>108–118 MHz</td><td>VOR/ILS-bakens</td><td>Navigatiebakens die hun naam in <b>morse</b> piepen</td></tr>
+    <tr><td>118–137 MHz</td><td>Luchtvaart (AM!)</td><td>Schiphol Tower 119.225 · nood 121.5 · ACARS 131.725</td></tr>
+    <tr><td>137.100 / 137.9125 MHz</td><td>NOAA 19 / 18 · Meteor</td><td>Je eigen weersatellietfoto</td></tr>
+    <tr><td>144.800 MHz</td><td>APRS</td><td>Posities/telemetrie van zendamateurs, makkelijk te decoderen</td></tr>
+    <tr><td>145.500 / 145.800 MHz</td><td>2m aanroep · <b>ISS!</b></td><td>Astronauten en SSTV-events vanaf het ruimtestation</td></tr>
+    <tr><td>156.800 MHz</td><td>Marifoon kanaal 16</td><td>Nood &amp; aanroep scheepvaart · AIS op 161.975/162.025</td></tr>
+    <tr><td>169.650 MHz</td><td>P2000</td><td>Alarmeringen hulpdiensten (FLEX)</td></tr>
+  </table>
+</section>
+
+<section>
+  <h3>UHF en hoger <span class="badge adv">kleine antennes, grote projecten</span></h3>
+  <table class="freq-table small">
+    <tr><th>Frequentie</th><th>Wat</th><th>Waarom leuk</th></tr>
+    <tr><td>402–406 MHz</td><td><b>Radiosondes</b> 🎈</td><td>Weerballonnen (De Bilt, 2×/dag) live volgen — en soms terugvinden! (radiosonde_auto_rx)</td></tr>
+    <tr><td>430–440 MHz</td><td>Amateurs 70 cm</td><td>Repeaters, 433.500 aanroep, satellieten op 435–438</td></tr>
+    <tr><td>433.92 / 868 MHz</td><td>ISM-sensoren</td><td>rtl_433: het IoT om je heen</td></tr>
+    <tr><td>446.0–446.2 MHz</td><td>PMR446</td><td>Vergunningsvrije portofoons — bouwmarkt, evenementen</td></tr>
+    <tr><td>1090 MHz</td><td>ADS-B</td><td>Vliegtuigen tot 400 km ver</td></tr>
+    <tr><td>1691 MHz</td><td>Meteosat HRIT</td><td>Geostationair: elk kwartier een volledige aardschijf (schotel + LNA)</td></tr>
+  </table>
+  <div class="keybox">🔑 Startvolgorde voor vanavond: FM → luchtvaart → P2000 → 433 MHz. Daarna plan je je eerste NOAA-pass.</div>
+</section>
+</section>
+
+<section>
+  <h2>Onbekend signaal? Reverse engineering <span class="badge adv">gevorderd</span></h2>
+  <ol class="small">
+    <li class="fragment"><b>Vind</b> het signaal in de waterfall; noteer frequentie en bandbreedte</li>
+    <li class="fragment"><b>Neem op</b> als IQ-bestand (SDR++ record / <code class="inline">rtl_sdr</code>)</li>
+    <li class="fragment"><b>Inspecteer</b> in inspectrum/URH: modulatie? symboolrate? preamble?</li>
+    <li class="fragment"><b>Demoduleer</b> naar bits (URH doet FSK/ASK/PSK semi-automatisch)</li>
+    <li class="fragment"><b>Analyseer</b> bitpatronen: sync-words, lengtes, counters, checksums (CRC-reveng!)</li>
+    <li class="fragment"><b>Decodeer</b>: schrijf een parser, of check of rtl_433 het al kent</li>
+  </ol>
+  <p class="small">💡 Veel 433 MHz-apparaten gebruiken simpele OOK + vaste codes — daarom zijn replay-attacks op oude autosleutels mogelijk (en daarom hebben moderne rolling codes).</p>
+  <aside class="notes">Goede case study: de talks van Samy Kamkar en de garage-deur openers.</aside>
+</section>
+
+<section>
+  <h2>✋ Even checken #3 — jij bent de detective</h2>
+  <p class="quiz-q">In je waterfall op <b>433.92 MHz</b> zie je elke ~30 seconden een korte, smalle burst. Wat is het — en hoe kom je erachter?</p>
+  <ul>
+    <li class="fragment">Korte periodieke bursts in de ISM-band → vrijwel zeker een <b>sensor</b> (weerstation, deurbel, TPMS…)</li>
+    <li class="fragment">Stap 1: <code class="inline">rtl_433 -f 433.92M</code> — grote kans dat één van de 250 decoders hem al kent</li>
+    <li class="fragment">Stap 2 (niets?): IQ opnemen → URH/inspectrum → het reverse-engineering-stappenplan van net</li>
+  </ul>
+  <div class="keybox fragment">🔑 Dit denkpatroon — <b>kijken → herkennen → decoderen → analyseren</b> — is de kern van álle SDR-projecten.</div>
+</section>
+
+<!-- ============ DEEL 6: DATA-ANALYSE ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #006064, #000)">
+  <h1>Deel 6</h1>
+  <h2>Data-analyse</h2>
+  <p class="small">Van IQ-bestand tot inzicht</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · <b>Data</b> · Wetgeving · Demo's</p>
+</section>
+
+<section>
+  <h2>De SDR data-pipeline</h2>
+  <svg class="diagram" viewBox="0 0 900 190">
+    <g font-size="16" fill="#fff" text-anchor="middle">
+      <rect x="20" y="40" width="130" height="80" rx="8" fill="#006064" stroke="#4dd0e1"/>
+      <text x="85" y="72">📡 IQ-opname</text><text x="85" y="96" font-size="13">.cf32 / .cs8 / SigMF</text>
+      <rect x="190" y="40" width="130" height="80" rx="8" fill="#006064" stroke="#4dd0e1"/>
+      <text x="255" y="72">🔬 DSP</text><text x="255" y="96" font-size="13">filter · demod · FFT</text>
+      <rect x="360" y="40" width="130" height="80" rx="8" fill="#006064" stroke="#4dd0e1"/>
+      <text x="425" y="72">📋 Decodering</text><text x="425" y="96" font-size="13">bits → berichten</text>
+      <rect x="530" y="40" width="130" height="80" rx="8" fill="#006064" stroke="#4dd0e1"/>
+      <text x="595" y="72">🗄️ Opslag</text><text x="595" y="96" font-size="13">JSON · SQLite · MQTT</text>
+      <rect x="700" y="40" width="130" height="80" rx="8" fill="#1b5e20" stroke="#81c784"/>
+      <text x="765" y="72">📊 Analyse</text><text x="765" y="96" font-size="13">pandas · Grafana</text>
+    </g>
+    <g stroke="#ffb74d" stroke-width="2.5" marker-end="url(#arr3)">
+      <line x1="150" y1="80" x2="186" y2="80"/><line x1="320" y1="80" x2="356" y2="80"/>
+      <line x1="490" y1="80" x2="526" y2="80"/><line x1="660" y1="80" x2="696" y2="80"/>
+    </g>
+    <defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ffb74d"/></marker></defs>
+  </svg>
+  <ul class="small">
+    <li><b>SigMF</b>: standaard om IQ-opnames + metadata (freq, rate, tijd) te delen</li>
+    <li>Scheiding opname ↔ analyse: je kunt een signaal eindeloos opnieuw bekijken</li>
+  </ul>
+</section>
+
+<section>
+  <h2>IQ-data in Python <span class="badge adv">gevorderd</span></h2>
+  <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+
+fs = 2.4e6                      # samplerate
+raw = np.fromfile("opname.cs8", dtype=np.int8)       # RTL-SDR: 8-bit
+iq  = (raw[0::2] + 1j*raw[1::2]) / 127.5 - (1+1j)    # -> complex
+
+# Spectrogram (waterfall)
+f, t, Sxx = signal.spectrogram(iq, fs=fs, nperseg=4096,
+                               return_onesided=False)
+plt.pcolormesh(np.fft.fftshift(f), t,
+               10*np.log10(np.fft.fftshift(Sxx, axes=1)).T)
+plt.xlabel("Frequentie-offset (Hz)"); plt.ylabel("Tijd (s)")
+
+# FM-demodulatie in 1 regel: fase-verschil tussen samples
+audio = np.angle(iq[1:] * np.conj(iq[:-1]))</code></pre>
+  <p class="small">NumPy + SciPy = je eigen SDR-lab. Aanrader: <b>PySDR</b> (pysdr.org), gratis online boek.</p>
+</section>
+
+<section>
+  <h2>Van IQ naar audio — in beeld</h2>
+  <p class="small">Die ene regel <code class="inline">np.angle(iq[1:] * conj(iq[:-1]))</code> doet dit:</p>
+  <img class="shot" src="assets/fm_demod_chain.png" alt="FM demodulatie keten">
+</section>
+
+<section>
+  <h2>Berichten-data analyseren</h2>
+  <ul class="small">
+    <li>Decoders leveren gestructureerde data (JSON) → klassieke data-analyse:</li>
+  </ul>
+  <pre><code class="language-python">import pandas as pd
+
+df = pd.read_json("adsb_log.jsonl", lines=True)
+
+df["hour"] = df.time.dt.hour
+df.groupby("hour").flight.nunique().plot(kind="bar")   # drukte per uur
+
+# verste ontvangst per richting -> antennediagram van je eigen setup
+df.groupby(df.bearing.round(-1)).distance_km.max().plot(kind="polar")</code></pre>
+  <div class="cols small">
+    <div>
+      <b>Leuke vragen voor ADS-B:</b>
+      <ul><li>Hoe ver reikt mijn antenne, en waarom niet rond?</li>
+      <li>Effect van weer/seizoen op bereik?</li></ul>
+    </div>
+    <div>
+      <b>Voor rtl_433-sensoren:</b>
+      <ul><li>Temperatuurtrends van de buurt</li>
+      <li>Hoe vaak zendt elk apparaat? Batterijstatus?</li></ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>…en dit komt eruit 📊</h2>
+  <div class="cols">
+    <div>
+      <img class="shot" src="assets/adsb_polar.png" alt="ADS-B bereik polar plot">
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center">
+      <img class="shot" src="assets/rtl433_log.png" alt="rtl_433 sensorlog">
+      <p class="small fragment" style="margin-top:.6em">Je antennebereik-plot verraadt precies welk gebouw in de weg staat — en de buurt-sensoren loggen 24/7 gratis mee.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Dashboards &amp; langetermijn-monitoring</h2>
+  <div class="cols">
+    <div style="flex:2">
+      <ul class="small">
+        <li><b>Raspberry Pi + RTL-SDR</b> = 24/7 ontvangststation (&lt; 5 W)</li>
+        <li>Pipeline: <code class="inline">rtl_433 → MQTT → InfluxDB → Grafana</code></li>
+        <li>ADS-B: <code class="inline">readsb → tar1090</code> (live kaart) + <code class="inline">graphs1090</code> (statistieken)</li>
+        <li>Meedoen met gedistribueerde netwerken:
+          <ul>
+            <li>ADSBexchange / FR24 / airplanes.live (vliegtuigen)</li>
+            <li>SatNOGS — open netwerk van satellietgrondstations</li>
+            <li>WebSDR / KiwiSDR — jouw ontvanger online delen</li>
+          </ul>
+        </li>
+      </ul>
+      <p class="ok small">Van hobby naar citizen science: jouw antenne wordt onderdeel van een wereldwijd meetnetwerk.</p>
+    </div>
+    <div style="flex:1">
+      <img class="shot" src="assets/discone_photo.jpg" alt="Discone antenne op dak" style="max-height:430px">
+      <p class="credit">Breedband discone + weerstation op het dak — mr_t_77, CC BY-SA 2.0, Wikimedia Commons</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Machine learning op RF <span class="badge adv">gevorderd</span></h2>
+  <ul class="small">
+    <li><b>Automatische modulatieherkenning</b>: CNN's op IQ-data of spectrogrammen (RadioML-datasets)</li>
+    <li><b>RF fingerprinting</b>: zenders herkennen aan minieme hardware-imperfecties</li>
+    <li><b>Anomaliedetectie</b>: afwijkende signalen in het spectrum spotten (spectrum monitoring)</li>
+    <li>Spectrogram = plaatje → alle computer vision-technieken zijn toepasbaar</li>
+    <li>Tooling: GNU Radio + PyTorch, <code class="inline">torchsig</code>, DeepSig datasets</li>
+  </ul>
+  <p class="small">Onderzoeksveld in opkomst — laagdrempelig om zelf mee te experimenteren omdat je je eigen trainingsdata kunt opnemen.</p>
+</section>
+
+<!-- ============ DEEL 7: WETGEVING ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #f57f17, #000)">
+  <h1>Deel 7</h1>
+  <h2>Wetgeving in Nederland ⚖️</h2>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · <b>Wetgeving</b> · Demo's</p>
+</section>
+
+<section>
+  <h2>Ontvangen: wat mag?</h2>
+  <ul class="small">
+    <li><b>Luisteren is in principe vrij</b> — een ontvanger hebben en gebruiken mag</li>
+    <li>MAAR (Telecommunicatiewet + Wetboek van Strafrecht):
+      <ul>
+        <li>Niet-openbare communicatie die je opvangt mag je <b>niet delen of misbruiken</b></li>
+        <li>Afluisteren van bijv. telefonie is strafbaar</li>
+      </ul>
+    </li>
+    <li>Praktisch: omroep, luchtvaart, amateurs, satellieten, ISM-sensoren, ADS-B → prima</li>
+    <li>P2000/pagers: ontvangen gedoogd, inhoud met persoonsgegevens publiceren → risico (AVG)</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Zenden: alleen met vergunning of in vrije banden</h2>
+  <ul class="small">
+    <li><b>Zenden zonder toestemming is verboden</b> — handhaving door <b>RDI</b> (Rijksinspectie Digitale Infrastructuur), boetes kunnen fors zijn</li>
+    <li>Ook "even testen" met een HackRF op FM of GPS-frequenties: illegaal én gevaarlijk (interferentie met luchtvaart/hulpdiensten!)</li>
+    <li>Legaal zenden kan via:
+      <ul>
+        <li><b>Vergunningsvrije banden</b> (ISM: 433/868 MHz, WiFi) — binnen vermogens- en duty-cycle-limieten, met conforme apparatuur</li>
+        <li><b>Amateurradio-licentie (N of F)</b>: examen bij RDI → roepnaam → experimenteren op amateurbanden is juist <i>de bedoeling</i></li>
+      </ul>
+    </li>
+  </ul>
+  <div class="ok small">🎓 De N-licentie is goed te doen en opent de deur naar legaal zenden, eigen zenders bouwen en satellietwerk. Zie veron.nl / vrza.nl voor cursussen.</div>
+</section>
+
+<section>
+  <h2>Ethiek: with great power…</h2>
+  <ul class="small">
+    <li>SDR geeft je toegang tot veel — gebruik het verantwoord:</li>
+    <li>✅ Doen: eigen apparaten onderzoeken, open signalen decoderen, leren, publiceren over <i>techniek</i></li>
+    <li>❌ Niet doen: jammen, replay-attacks op andermans spullen, persoonsgegevens verspreiden, GPS spoofen</li>
+    <li>Responsible disclosure: zwakke plek in een product gevonden? Meld bij fabrikant / NCSC</li>
+  </ul>
+  <aside class="notes">Goede plek voor discussie met de zaal: waar ligt de grens?</aside>
+</section>
+
+<!-- ============ DEEL 8: DEMO'S ============ -->
+<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #880e4f, #000)">
+  <h1>Deel 8</h1>
+  <h2>Live demo's 🎙️</h2>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · <b>Demo's</b></p>
+</section>
+
+<section>
+  <h2>Demoplan</h2>
+  <ol>
+    <li><b>Waterfall-safari</b> — SDR++ open, spectrum verkennen: FM, DAB+, 433 MHz <span class="tiny">(5 min)</span></li>
+    <li><b>Vliegtuigen live</b> — dump1090/tar1090-kaart met vliegtuigen boven ons <span class="tiny">(5 min)</span></li>
+    <li><b>Sensoren sniffen</b> — rtl_433 live: wat zendt er hier in de zaal? <span class="tiny">(5 min)</span></li>
+    <li><b>P2000 meekijken</b> — multimon-ng/PDW alarmeringen <span class="tiny">(3 min)</span></li>
+    <li><b>GNU Radio</b> — FM-ontvanger live bouwen in GRC <span class="tiny">(7 min)</span></li>
+  </ol>
+  <p class="warn small">Backup-plan: IQ-opnames van thuis meenemen — demo's werken dan ook zonder ontvangst in de zaal (File Source in plaats van RTL-SDR Source).</p>
+  <aside class="notes">Vooraf checken: USB-poorten, drivers (zadig op Windows), antennes bij het raam, opnames op schijf als fallback.</aside>
+</section>
+
+<!-- ============ AFSLUITING ============ -->
+<section>
+  <h2>🪜 Jouw leerpad: 5 experimenten</h2>
+  <ol>
+    <li class="fragment"><b>Dag 1</b> — FM-radio ontvangen in SDR++ <span class="tiny">(direct succes, leert tunen + waterfall lezen)</span></li>
+    <li class="fragment"><b>Week 1</b> — vliegtuigen volgen met dump1090 <span class="tiny">(leert antennes + CLI-tools)</span></li>
+    <li class="fragment"><b>Week 2</b> — rtl_433: sensoren in je straat ontdekken <span class="tiny">(leert ISM-band + JSON-data)</span></li>
+    <li class="fragment"><b>Maand 1</b> — eigen weersatellietfoto: V-dipool + SatDump <span class="tiny">(leert passes plannen + antennebouw)</span></li>
+    <li class="fragment"><b>Maand 2+</b> — GNU Radio flowgraph + IQ-analyse in Python <span class="tiny">(…en misschien je N-licentie?)</span></li>
+  </ol>
+  <div class="keybox fragment">🔑 Elke stap bouwt op de vorige — precies zoals deze presentatie. Blijf je ergens hangen: r/RTLSDR en de VERON-afdelingen helpen graag.</div>
+</section>
+
+<section>
+  <h2>Beginnen? Boodschappenlijst 🛒</h2>
+  <table class="small">
+    <tr><th>Niveau</th><th>Setup</th><th>Kosten</th></tr>
+    <tr><td>Instap</td><td>RTL-SDR Blog V4 kit (incl. antennes) + SDR++</td><td>~€45</td></tr>
+    <tr><td>Hobbyist</td><td>+ Raspberry Pi, ADS-B antenne, V-dipool buiten</td><td>~€150</td></tr>
+    <tr><td>Gevorderd</td><td>+ Airspy/SDRplay, LNA's, filters, discone op dak</td><td>~€400</td></tr>
+    <tr><td>Zendamateur</td><td>+ N-licentie, HackRF/PlutoSDR, transceiver</td><td>~€700+</td></tr>
+  </table>
+  <h3 class="small" style="margin-top:.8em">Leren</h3>
+  <ul class="small">
+    <li><b>pysdr.org</b> — gratis boek: SDR + DSP met Python</li>
+    <li><b>rtl-sdr.com</b> — blog met eindeloos veel projecten</li>
+    <li><b>sigidwiki.com</b> — "wat is dit voor signaal?" encyclopedie</li>
+    <li><b>greatscottgadgets.com/sdr</b> — gratis videocursus (Michael Ossmann)</li>
+    <li>r/RTLSDR, VERON/VRZA-afdelingen, hackerspaces</li>
+  </ul>
+</section>
+
+<section>
+  <h2>📋 Spiekbrief — maak een foto! 📸</h2>
+  <div class="cols">
+    <div>
+      <h3 class="small">Frequenties om te onthouden</h3>
+      <table class="freq-table small">
+        <tr><td>87.5–108 MHz</td><td>FM-omroep</td></tr>
+        <tr><td>118–137 MHz</td><td>luchtvaart (AM!)</td></tr>
+        <tr><td>137 MHz</td><td>NOAA / Meteor weersat.</td></tr>
+        <tr><td>144 / 430 MHz</td><td>zendamateurs</td></tr>
+        <tr><td>169.65 MHz</td><td>P2000 alarmeringen</td></tr>
+        <tr><td>433.92 / 868 MHz</td><td>sensoren (ISM)</td></tr>
+        <tr><td>1090 MHz</td><td>ADS-B vliegtuigen</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 class="small">Welke tool wanneer?</h3>
+      <ul class="small" style="line-height:1.5">
+        <li>luisteren/verkennen → <b>SDR++</b></li>
+        <li>vliegtuigen → <b>dump1090</b> · sensoren → <b>rtl_433</b></li>
+        <li>satellieten → <b>SatDump</b> · pagers → <b>multimon-ng</b></li>
+        <li>onbekend signaal → <b>URH / inspectrum</b></li>
+        <li>zelf bouwen → <b>GNU Radio</b> · leren → <b>pysdr.org</b></li>
+      </ul>
+      <h3 class="small">Formules</h3>
+      <ul class="small" style="line-height:1.5">
+        <li>λ (m) ≈ 300 / f (MHz)</li>
+        <li>zichtbare bandbreedte = samplerate</li>
+        <li>+3 dB = ×2 vermogen, +10 dB = ×10</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="center-slide">
+  <h1>Vragen? 🙋</h1>
+  <p>📻 Het spectrum ligt open — veel plezier met luisteren!</p>
+  <p class="tiny">Sheets + demo-materiaal: [link/QR hier]</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    plugins: [ RevealHighlight, RevealNotes ]
+  });
+
+  /* ================= Canvas-animaties ================= */
+  // turbo-achtige kleurenmap voor de waterfall
+  const LUT = (() => {
+    const s = [[10,10,40],[25,50,140],[20,130,210],[40,200,160],[170,230,60],[250,200,40],[255,110,20],[230,30,30]];
+    const lut = [];
+    for (let i = 0; i < 256; i++) {
+      const x = i / 255 * (s.length - 1), j = Math.min(Math.floor(x), s.length - 2), f = x - j;
+      lut.push([0, 1, 2].map(k => Math.round(s[j][k] * (1 - f) + s[j + 1][k] * f)));
+    }
+    return lut;
+  })();
+
+  const animFactories = {
+
+    // Titel: drie lopende golven
+    animTitle(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        const waves = [['#4fc3f7', 38, 0.010, 2.2], ['#ffb74d', 24, 0.016, -1.5], ['#66bb6a', 14, 0.024, 3.1]];
+        for (const [col, amp, k, v] of waves) {
+          ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath();
+          for (let x = 0; x <= w; x += 3) {
+            const y = h / 2 + amp * Math.sin(k * x - v * t) * (0.6 + 0.4 * Math.sin(0.004 * x + 0.5 * v * t));
+            x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          }
+          ctx.stroke();
+        }
+      };
+    },
+
+    // Lopende golf met golflengte- en amplitude-markering
+    animWave(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const amp = 55, k = 2 * Math.PI / 240, mid = h / 2 + 10;
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 3; ctx.beginPath();
+        for (let x = 0; x <= w; x += 2) {
+          const y = mid - amp * Math.sin(k * x - 2.2 * t);
+          x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+        // golflengte-pijl tussen twee toppen (meebewegend)
+        const xTop = ((2.2 * t / k) % 240 + 240) % 240;
+        ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(xTop + 60, mid + amp + 18); ctx.lineTo(xTop + 300, mid + amp + 18); ctx.stroke();
+        ctx.fillStyle = '#ffb74d'; ctx.font = '20px sans-serif';
+        ctx.fillText('λ (golflengte)', xTop + 130, mid + amp + 42);
+        // amplitude
+        ctx.strokeStyle = '#66bb6a';
+        ctx.beginPath(); ctx.moveTo(26, mid); ctx.lineTo(26, mid - amp); ctx.stroke();
+        ctx.fillStyle = '#66bb6a'; ctx.fillText('amplitude', 36, mid - amp / 2);
+      };
+    },
+
+    // AM / FM / FSK live gemoduleerd
+    animMod(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const row = h / 3;
+      const bit = x => (Math.sin(x * 7.3) * 43758.5453) % 1 > 0 ? 1 : 0; // pseudo-random bits
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        ctx.font = '22px sans-serif';
+        const draw = (y0, col, fy) => {
+          ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath();
+          for (let x = 70; x <= w - 10; x += 1.5) {
+            const y = y0 + fy(x);
+            x > 70 ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          }
+          ctx.stroke();
+        };
+        const msg = x => Math.sin(0.012 * x - 1.8 * t);          // boodschap
+        // AM
+        ctx.fillStyle = '#aaa'; ctx.fillText('AM', 14, row * 0.55);
+        draw(row * 0.5, '#4fc3f7', x => -(0.55 + 0.4 * msg(x)) * (row * 0.38) * Math.sin(0.25 * x - 14 * t));
+        ctx.strokeStyle = '#4fc3f755'; ctx.lineWidth = 1.5; ctx.beginPath();  // envelope
+        for (let x = 70; x <= w - 10; x += 3) {
+          const y = row * 0.5 - (0.55 + 0.4 * msg(x)) * (row * 0.38);
+          x > 70 ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+        // FM (fase-integratie)
+        ctx.fillStyle = '#aaa'; ctx.fillText('FM', 14, row * 1.55);
+        let ph = -10 * t;
+        ctx.strokeStyle = '#66bb6a'; ctx.lineWidth = 2.2; ctx.beginPath();
+        for (let x = 70; x <= w - 10; x += 1.5) {
+          ph += 0.22 * (1 + 0.55 * msg(x)) * 1.5;
+          const y = row * 1.5 - row * 0.36 * Math.sin(ph);
+          x > 70 ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+        // FSK
+        ctx.fillStyle = '#aaa'; ctx.fillText('FSK', 14, row * 2.55);
+        let ph2 = 0; const shift = Math.floor(28 * t);
+        ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 2.2; ctx.beginPath();
+        let lastBit = -1;
+        for (let x = 70; x <= w - 10; x += 1.5) {
+          const b = bit(Math.floor((x + shift * 1.5) / 70));
+          ph2 += (b ? 0.42 : 0.15) * 1.5;
+          const y = row * 2.5 - row * 0.36 * Math.sin(ph2);
+          x > 70 ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          if (b !== lastBit && x > 70) { ctx.fillStyle = '#ffb74d'; ctx.fillText(String(b), x, row * 2.1); lastBit = b; }
+          if (lastBit === -1) lastBit = b;
+        }
+        ctx.stroke();
+      };
+    },
+
+    // Draaiende IQ-fasor + live I/Q-traces
+    animIQ(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const cx = 135, cy = h / 2, R = 92;
+      const hist = [];
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        const th = 1.6 * t;
+        const I = Math.cos(th), Q = Math.sin(th);
+        hist.unshift({ I, Q }); if (hist.length > 320) hist.pop();
+        // cirkel + assen
+        ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - R - 15, cy); ctx.lineTo(cx + R + 15, cy);
+        ctx.moveTo(cx, cy - R - 12); ctx.lineTo(cx, cy + R + 12); ctx.stroke();
+        ctx.fillStyle = '#aaa'; ctx.font = '17px sans-serif';
+        ctx.fillText('I', cx + R + 20, cy + 5); ctx.fillText('Q', cx + 6, cy - R - 16);
+        // projectielijnen
+        const px = cx + R * I, py = cy - R * Q;
+        ctx.strokeStyle = '#4fc3f766'; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
+        ctx.setLineDash([]);
+        // fasor
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+        ctx.fillStyle = '#ffb74d'; ctx.beginPath(); ctx.arc(px, py, 7, 0, 7); ctx.fill();
+        // I/Q traces rechts
+        const x0 = 300, tw = w - x0 - 20;
+        const trace = (get, col, y0, lbl) => {
+          ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath();
+          hist.forEach((s, i) => {
+            const x = x0 + i / 320 * tw, y = y0 - get(s) * 38;
+            i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          });
+          ctx.stroke();
+          ctx.fillStyle = col; ctx.fillText(lbl, x0 + tw + 2, y0 + 5);
+        };
+        trace(s => s.I, '#4fc3f7', h / 2 - 55, '');
+        trace(s => s.Q, '#66bb6a', h / 2 + 62, '');
+        ctx.fillStyle = '#4fc3f7'; ctx.fillText('I = cos(ωt)', x0, 24);
+        ctx.fillStyle = '#66bb6a'; ctx.fillText('Q = sin(ωt)  (90° later)', x0 + 140, 24);
+        ctx.fillStyle = '#ddd'; ctx.font = '19px sans-serif';
+        ctx.fillText('amplitude = √(I²+Q²)   fase = atan2(Q, I)', x0, h - 14);
+      };
+    },
+
+    // Live scrollende waterfall
+    animWf(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+      const row = ctx.createImageData(w, 1);
+      const st = { pOn: false, pT: 0, hop: 0.78, hT: 0 };
+      const gauss = (x, mu, sig) => Math.exp(-((x - mu) ** 2) / (2 * sig * sig));
+      return t => {
+        for (let r = 0; r < 2; r++) {   // 2 rijen per frame
+          // bestaand beeld 1px omlaag schuiven
+          ctx.drawImage(cv, 0, 0, w, h - 1, 0, 1, w, h - 1);
+          // burst/hop status updaten
+          if (t > st.pT) { st.pOn = !st.pOn; st.pT = t + (st.pOn ? 0.5 + Math.random() : 0.4 + Math.random() * 1.5); }
+          if (t > st.hT) { st.hop = 0.70 + Math.floor(Math.random() * 5) * 0.045; st.hT = t + 0.35; }
+          const wob = Math.sin(1.3 * t + r) * 2;
+          for (let x = 0; x < w; x++) {
+            let v = 0.07 + Math.random() * 0.16;                                   // ruisvloer
+            v += 0.85 * gauss(x, 0.16 * w, 2.2) + 0.7 * gauss(x, 0.20 * w, 2.2);  // 2× NBFM
+            v += (0.55 + 0.35 * Math.random()) * gauss(x, 0.40 * w + wob, 13);    // WBFM
+            if (st.pOn) v += 0.8 * gauss(x, 0.58 * w, 2.6);                       // pager
+            v += 0.75 * gauss(x, st.hop * w, 3.2);                                // hopper
+            const c = LUT[Math.min(255, Math.floor(v * 230))];
+            const o = x * 4;
+            row.data[o] = c[0]; row.data[o + 1] = c[1]; row.data[o + 2] = c[2]; row.data[o + 3] = 255;
+          }
+          ctx.putImageData(row, 0, 0);
+        }
+      };
+    },
+
+    // SNR-speeltuin: spectrum met instelbare signaalsterkte
+    animSNR(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const slider = document.getElementById('snrSlider');
+      const label = document.getElementById('snrLabel');
+      const gauss = (x, mu, sig) => Math.exp(-((x - mu) ** 2) / (2 * sig * sig));
+      return t => {
+        const snr = +slider.value;
+        label.textContent = snr + ' dB';
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        const floorY = h - 60, pxPerDb = (h - 110) / 40;
+        // ruisvloer + signaalpiek
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 1.8; ctx.beginPath();
+        for (let x = 0; x < w; x += 2) {
+          const sig = snr * gauss(x, w * 0.45, 26);
+          const v = sig + (Math.random() * 6 - 3) * (1 - 0.6 * gauss(x, w * 0.45, 26));
+          const y = floorY - v * pxPerDb;
+          x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+        // ruisvloer-lijn
+        ctx.strokeStyle = '#555'; ctx.setLineDash([6, 6]);
+        ctx.beginPath(); ctx.moveTo(0, floorY); ctx.lineTo(w, floorY); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = '#888'; ctx.font = '16px sans-serif';
+        ctx.fillText('ruisvloer (−100 dBm)', 15, floorY + 25);
+        // SNR-pijl
+        const topY = floorY - snr * pxPerDb;
+        ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(w * 0.45 + 50, floorY); ctx.lineTo(w * 0.45 + 50, topY); ctx.stroke();
+        ctx.fillStyle = '#ffb74d'; ctx.fillText('SNR ' + snr + ' dB', w * 0.45 + 60, (floorY + topY) / 2);
+        // verdict-stoplicht
+        const checks = [['FM-audio luisterbaar', 5], ['POCSAG decodeerbaar', 10], ['ADS-B decodeerbaar', 14], ['Weersatelliet-beeld schoon', 20]];
+        ctx.font = '17px sans-serif';
+        checks.forEach(([naam, min], i) => {
+          const ok = snr >= min;
+          ctx.fillStyle = ok ? '#66bb6a' : '#ef5350';
+          ctx.fillText((ok ? '✔ ' : '✘ ') + naam + '  (≥' + min + ' dB)', 30, 34 + i * 26);
+        });
+      };
+    },
+
+    // Aliasing-demo: sampleer een sinus met instelbare samplerate
+    animAlias(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const slider = document.getElementById('aliasSlider');
+      const label = document.getElementById('aliasLabel');
+      const F0 = 10;                              // cycli over de breedte
+      return t => {
+        const fs = +slider.value;                 // samples over de breedte
+        const nyqOk = fs >= 2 * F0;
+        label.textContent = fs + ' samples ' + (nyqOk ? '✔' : '✘ < 2×f');
+        label.style.color = nyqOk ? '#66bb6a' : '#ef5350';
+        const ph = 0.6 * t, mid = h / 2 + 15, amp = h * 0.3;
+        const sig = x => Math.sin(2 * Math.PI * F0 * x / w + ph);
+        // alias-frequentie (gevouwen; loopt exact door de samplepunten)
+        const fa = F0 - Math.round(F0 / fs) * fs;
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        ctx.font = '17px sans-serif';
+        ctx.fillStyle = '#4fc3f7'; ctx.fillText('echt signaal: 10 cycli', 20, 28);
+        ctx.fillStyle = nyqOk ? '#66bb6a' : '#ff7043';
+        ctx.fillText(nyqOk ? 'reconstructie: klopt (Nyquist gehaald)' : ('reconstructie: spook-signaal op ' + Math.abs(fa).toFixed(1) + ' cycli!'), 280, 28);
+        // origineel
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2; ctx.beginPath();
+        for (let x = 0; x <= w; x += 2) { const y = mid - amp * sig(x); x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        ctx.stroke();
+        // reconstructie uit de samples
+        ctx.strokeStyle = nyqOk ? '#66bb6a' : '#ff7043';
+        ctx.lineWidth = 2.5; ctx.setLineDash([7, 5]); ctx.beginPath();
+        for (let x = 0; x <= w; x += 2) {
+          const y = mid - amp * Math.sin(2 * Math.PI * fa * x / w + ph);
+          x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke(); ctx.setLineDash([]);
+        // samples
+        ctx.fillStyle = '#ffb74d';
+        for (let i = 0; i <= fs; i++) {
+          const x = i * w / fs, y = mid - amp * sig(x);
+          ctx.strokeStyle = '#ffb74d44'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(x, mid + amp + 18); ctx.lineTo(x, y); ctx.stroke();
+          ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill();
+        }
+      };
+    },
+
+    // Live FFT: twee tonen in de tijd -> echte DFT-balken
+    animFFT(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const slider = document.getElementById('fftSlider');
+      const N = 128, BINS = 32, F1 = 7;
+      return t => {
+        const f2 = +slider.value;
+        const ph = 2.2 * t;
+        const x = n => Math.sin(2 * Math.PI * F1 * n / N + ph) + 0.8 * Math.sin(2 * Math.PI * f2 * n / N + 0.7 * ph);
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        ctx.font = '16px sans-serif';
+        // tijdsignaal links
+        ctx.fillStyle = '#aaa'; ctx.fillText('samples (tijd) — 2 tonen door elkaar', 25, 24);
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2; ctx.beginPath();
+        for (let n = 0; n < N; n++) {
+          const px = 25 + n / N * 390, py = h / 2 + 15 - x(n) * h * 0.2;
+          n ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        }
+        ctx.stroke();
+        // pijl
+        ctx.fillStyle = '#ffb74d'; ctx.font = '25px sans-serif'; ctx.fillText('→ FFT →', 430, h / 2 + 22);
+        // echte DFT rechts
+        ctx.font = '16px sans-serif'; ctx.fillStyle = '#aaa'; ctx.fillText('spectrum (frequentie) — en daar zijn ze weer, apart', 560, 24);
+        for (let k = 1; k <= BINS; k++) {
+          let re = 0, im = 0;
+          for (let n = 0; n < N; n++) { const v = x(n), a = 2 * Math.PI * k * n / N; re += v * Math.cos(a); im -= v * Math.sin(a); }
+          const mag = Math.sqrt(re * re + im * im) / (N / 2);
+          const bx = 560 + (k - 1) * 11.5, bh = Math.min(1, mag) * (h - 100);
+          ctx.fillStyle = (k === F1) ? '#ffb74d' : (k === f2 ? '#66bb6a' : '#2d6cb5');
+          ctx.fillRect(bx, h - 50 - bh, 9, bh);
+        }
+        ctx.strokeStyle = '#555'; ctx.beginPath(); ctx.moveTo(555, h - 49); ctx.lineTo(940, h - 49); ctx.stroke();
+        ctx.fillStyle = '#789'; ctx.fillText('laag →  hoog', 710, h - 22);
+        ctx.fillStyle = '#ffb74d'; ctx.fillText('toon 1', 560 + (F1 - 1) * 11.5 - 18, h - 26);
+      };
+    },
+
+    // Constellatie-ruis-demo: QPSK met instelbare SNR
+    animConst(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const slider = document.getElementById('constSlider');
+      const label = document.getElementById('constLabel');
+      const cx = h / 2 + 40, cy = h / 2, R = h * 0.36;
+      ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+      let errs = 0, tot = 0;
+      const randn = () => (Math.random() + Math.random() + Math.random() + Math.random() - 2) * 1.7;
+      return t => {
+        const snr = +slider.value;
+        label.textContent = snr + ' dB';
+        // fade voor trails (alleen linkerdeel)
+        ctx.fillStyle = 'rgba(10,15,26,0.12)'; ctx.fillRect(0, 0, h + 90, h);
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(h + 90, 0, w - h - 90, h);
+        // assen
+        ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx - R * 1.3, cy); ctx.lineTo(cx + R * 1.3, cy);
+        ctx.moveTo(cx, cy - R * 1.3); ctx.lineTo(cx, cy + R * 1.3); ctx.stroke();
+        const sigma = Math.pow(10, -snr / 20) * 1.9;
+        for (let i = 0; i < 45; i++) {
+          const bi = Math.random() < 0.5 ? 1 : -1, bq = Math.random() < 0.5 ? 1 : -1;
+          const I = bi / Math.SQRT2 + randn() * sigma, Q = bq / Math.SQRT2 + randn() * sigma;
+          const fout = Math.sign(I) !== bi || Math.sign(Q) !== bq;
+          tot++; if (fout) errs++;
+          ctx.fillStyle = fout ? '#ef5350' : '#4fc3f7';
+          ctx.beginPath(); ctx.arc(cx + I * R * 0.8, cy - Q * R * 0.8, 2.4, 0, 7); ctx.fill();
+        }
+        // ideale symboolposities
+        ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 1.6;
+        for (const a of [1, -1]) for (const b of [1, -1]) {
+          const px = cx + a / Math.SQRT2 * R * 0.8, py = cy - b / Math.SQRT2 * R * 0.8;
+          ctx.beginPath(); ctx.moveTo(px - 7, py); ctx.lineTo(px + 7, py); ctx.moveTo(px, py - 7); ctx.lineTo(px, py + 7); ctx.stroke();
+        }
+        // statistiek rechts
+        if (tot > 4000) { errs = Math.round(errs / 2); tot = Math.round(tot / 2); }
+        const ber = errs / Math.max(1, tot);
+        ctx.font = '20px sans-serif'; ctx.fillStyle = '#ddd';
+        ctx.fillText('QPSK · 2 bits per symbool', h + 120, 55);
+        ctx.fillText('symboolfouten: ' + (ber * 100).toFixed(2) + ' %', h + 120, 100);
+        ctx.font = '17px sans-serif';
+        const verdict = ber < 0.001 ? ['✔ vlekkeloos — ruimte voor 16-QAM', '#66bb6a']
+          : ber < 0.05 ? ['⚠ foutcorrectie houdt het nog bij', '#ffb74d']
+          : ['✘ valt weg → robuustere modulatie nodig', '#ef5350'];
+        ctx.fillStyle = verdict[1]; ctx.fillText(verdict[0], h + 120, 145);
+        ctx.fillStyle = '#789';
+        ctx.fillText('Dit gevecht voert je telefoon elke', h + 120, 205);
+        ctx.fillText('seconde met de dichtstbijzijnde mast.', h + 120, 230);
+      };
+    },
+
+    // ADS-B radarscherm met vliegtuigen + berichtenlog
+    animRadar(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const cx = h / 2 + 20, cy = h / 2, R = h * 0.44;
+      const CS = ['KLM1023', 'RYR88Q', 'EZY45', 'TRA5P', 'DLH402'];
+      const planes = CS.map((cs, i) => ({
+        cs, a: i * 1.26 + 0.5, r: 0.35 + 0.12 * i, hd: Math.random() * 6.28, trail: [], tLog: 0,
+      }));
+      const log = [];
+      const hex = n => Math.floor(Math.random() * 16 ** n).toString(16).padStart(n, '0');
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        // bereik-ringen
+        ctx.strokeStyle = '#1d3a26'; ctx.lineWidth = 1.5;
+        for (const f of [0.5, 1]) { ctx.beginPath(); ctx.arc(cx, cy, R * f, 0, 7); ctx.stroke(); }
+        ctx.fillStyle = '#3a6648'; ctx.font = '13px sans-serif';
+        ctx.fillText('100 km', cx + R * 0.5 - 24, cy - 6); ctx.fillText('200 km', cx + R - 26, cy - 6);
+        // sweep
+        const sw = (1.1 * t) % (2 * Math.PI);
+        ctx.strokeStyle = '#66bb6a'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + R * Math.cos(sw), cy + R * Math.sin(sw)); ctx.stroke();
+        ctx.fillStyle = '#4fc3f7'; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 7); ctx.fill();
+        ctx.fillStyle = '#9ab'; ctx.font = '13px sans-serif'; ctx.fillText('📡 jij', cx + 8, cy + 16);
+        // vliegtuigen
+        for (const p of planes) {
+          p.a += 0.0008 * Math.cos(p.hd); p.r += 0.0004 * Math.sin(p.hd);
+          if (p.r > 0.95 || p.r < 0.15) p.hd += Math.PI / 2;
+          const px = cx + R * p.r * Math.cos(p.a), py = cy + R * p.r * Math.sin(p.a);
+          p.trail.push([px, py]); if (p.trail.length > 36) p.trail.shift();
+          ctx.strokeStyle = '#4fc3f744'; ctx.lineWidth = 2; ctx.beginPath();
+          p.trail.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+          ctx.stroke();
+          ctx.fillStyle = '#ffb74d'; ctx.font = '15px sans-serif';
+          ctx.fillText('✈', px - 7, py + 5);
+          ctx.fillStyle = '#9ab'; ctx.font = '12px sans-serif';
+          ctx.fillText(p.cs, px + 9, py + 4);
+          // elk vliegtuig "zendt" af en toe een bericht
+          if (t - p.tLog > 1.4 + Math.random()) {
+            p.tLog = t;
+            log.unshift('*8d' + hex(6) + '58' + hex(8) + ';  ' + p.cs + '  FL' + (180 + Math.floor(Math.random() * 180)));
+            if (log.length > 9) log.pop();
+          }
+        }
+        // berichtenlog rechts
+        ctx.font = '15px monospace';
+        ctx.fillStyle = '#789'; ctx.fillText('dump1090 — Mode-S berichten (1090 MHz):', h + 60, 30);
+        log.forEach((l, i) => {
+          ctx.fillStyle = 'rgba(160,220,170,' + Math.max(0.15, 1 - i * 0.11) + ')';
+          ctx.fillText(l, h + 60, 60 + i * 27);
+        });
+      };
+    },
+
+    // Satellietpass: baan om de aarde + elevatiecurve
+    animPass(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const ex = 215, ey = h / 2 + 10, RE = 92, RO = 150;
+      const gsA = -Math.PI / 2;                       // grondstation bovenop
+      const gx = ex + RE * Math.cos(gsA), gy = ey + RE * Math.sin(gsA);
+      const hist = [];
+      return t => {
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, h);
+        // aarde
+        const grad = ctx.createRadialGradient(ex - 20, ey - 20, 10, ex, ey, RE);
+        grad.addColorStop(0, '#2d6cb5'); grad.addColorStop(1, '#0d3321');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(ex, ey, RE, 0, 7); ctx.fill();
+        // baan + zichtbaarheidsboog
+        ctx.strokeStyle = '#444'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(ex, ey, RO, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+        const horiz = Math.acos(RE / RO) + 0.12;
+        ctx.strokeStyle = '#66bb6a66'; ctx.lineWidth = 7;
+        ctx.beginPath(); ctx.arc(ex, ey, RO, gsA - horiz, gsA + horiz); ctx.stroke(); ctx.lineWidth = 1.5;
+        // satelliet
+        const sa = gsA + ((0.35 * t) % (2 * Math.PI)) - Math.PI;
+        const sx = ex + RO * Math.cos(sa), sy = ey + RO * Math.sin(sa);
+        const d = Math.abs(((sa - gsA) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+        const visible = d < horiz;
+        const elev = visible ? Math.max(0, 90 * (1 - d / horiz)) : 0;
+        if (visible) {
+          ctx.strokeStyle = '#66bb6a'; ctx.setLineDash([3, 4]);
+          ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(sx, sy); ctx.stroke(); ctx.setLineDash([]);
+        }
+        ctx.font = '20px sans-serif'; ctx.fillText('🛰️', sx - 11, sy + 7);
+        ctx.font = '15px sans-serif'; ctx.fillText('📡', gx - 8, gy - 8);
+        ctx.fillStyle = visible ? '#66bb6a' : '#789';
+        ctx.fillText(visible ? '🔊 IN ZICHT — elevatie ' + elev.toFixed(0) + '°' : 'achter de horizon… wachten op de volgende pass', 60, 32);
+        // elevatiecurve rechts
+        hist.push(elev); if (hist.length > 460) hist.shift();
+        const px0 = 450, pw = 470, py0 = h - 55, phh = h - 125;
+        ctx.strokeStyle = '#555';
+        ctx.beginPath(); ctx.moveTo(px0, py0); ctx.lineTo(px0 + pw, py0); ctx.stroke();
+        ctx.fillStyle = '#789'; ctx.fillText('horizon (0°)', px0 + pw - 85, py0 + 22);
+        ctx.fillText('elevatie ↑  (tijd →)', px0, 62);
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2; ctx.beginPath();
+        hist.forEach((e, i) => {
+          const x = px0 + i / 460 * pw, y = py0 - e / 90 * phh;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        });
+        ctx.stroke();
+      };
+    },
+
+    // Interactieve tuner: spectrum + mini-waterfall + WebAudio
+    animTuner(cv) {
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      const SPEC_H = 170, WF_Y = 190, WF_H = h - WF_Y;
+      ctx.fillStyle = '#000'; ctx.fillRect(0, WF_Y, w, WF_H);
+      const row = ctx.createImageData(w, 1);
+      const gauss = (x, mu, sig) => Math.exp(-((x - mu) ** 2) / (2 * sig * sig));
+      const slider = document.getElementById('tunerFreq');
+      const label = document.getElementById('tunerLabel');
+      // stations: positie (0..1), spectrale breedte (px), naam
+      const ST = {
+        morse: { p: 0.22, w: 3,  name: 'CW-baken' },
+        music: { p: 0.52, w: 16, name: 'FM-zender' },
+        pager: { p: 0.82, w: 4,  name: 'pager' },
+      };
+      const NOTES = [220, 262, 294, 330, 392, 330, 294, 262];
+      return t => {
+        const p = slider.value / 1000;
+        label.textContent = (88 + 20 * p).toFixed(1) + ' MHz';
+        const morseGate = MORSE_SEQ[Math.floor(t / 0.09) % MORSE_SEQ.length];
+        const burstOn = (t % 3.2) < 1.3;
+        // ---- spectrum ----
+        ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0, 0, w, SPEC_H + 12);
+        ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 1.6; ctx.beginPath();
+        const amp = x => {
+          let v = 0.1 + Math.random() * 0.1;
+          v += (morseGate ? 0.75 : 0.06) * gauss(x, ST.morse.p * w, ST.morse.w);
+          v += (0.68 + 0.22 * Math.random()) * gauss(x, ST.music.p * w, ST.music.w);
+          v += (burstOn ? 0.8 : 0.04) * gauss(x, ST.pager.p * w, ST.pager.w);
+          return v;
+        };
+        const vals = [];
+        for (let x = 0; x < w; x += 2) {
+          const v = amp(x); vals.push(v);
+          const y = SPEC_H - v * (SPEC_H - 20);
+          x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+        // stationnamen
+        ctx.font = '15px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#9ab';
+        for (const s of Object.values(ST)) ctx.fillText(s.name, s.p * w, 16);
+        // ---- mini-waterfall ----
+        ctx.drawImage(cv, 0, WF_Y, w, WF_H - 1, 0, WF_Y + 1, w, WF_H - 1);
+        for (let x = 0; x < w; x++) {
+          const v = vals[Math.min(vals.length - 1, x >> 1)];
+          const c = LUT[Math.min(255, Math.floor(v * 235))];
+          const o = x * 4;
+          row.data[o] = c[0]; row.data[o + 1] = c[1]; row.data[o + 2] = c[2]; row.data[o + 3] = 255;
+        }
+        ctx.putImageData(row, 0, WF_Y);
+        // ---- afstemlijn (alleen over het spectrum, anders geeft hij sporen in de waterfall) ----
+        const tx = p * w;
+        ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(tx, 20); ctx.lineTo(tx, WF_Y - 2); ctx.stroke();
+        ctx.fillStyle = '#ffb74d'; ctx.beginPath();
+        ctx.moveTo(tx - 7, 20); ctx.lineTo(tx + 7, 20); ctx.lineTo(tx, 32); ctx.fill();
+        ctx.textAlign = 'left';
+        // ---- audio bijwerken ----
+        if (tuner.ctx && tuner.on) {
+          const n = tuner.n, ct = tuner.ctx.currentTime;
+          const prox = {}; let maxP = 0;
+          for (const [k, s] of Object.entries(ST)) {
+            prox[k] = Math.exp(-((p - s.p) ** 2) / (2 * (s.w / w * 2.2) ** 2));
+            maxP = Math.max(maxP, prox[k]);
+          }
+          n.gNoise.gain.setTargetAtTime(0.03 + 0.2 * (1 - 0.92 * maxP), ct, 0.08);
+          // morse: toon vervormt als je ernaast zit (zoals echte CW-tuning)
+          n.oM.frequency.value = 600 + (p - ST.morse.p) * 9000;
+          n.gM.gain.setTargetAtTime(morseGate ? 0.45 * prox.morse : 0, ct, 0.01);
+          // muziek: melodie + detune naast de zender
+          const f = NOTES[Math.floor(t / 0.3) % NOTES.length];
+          n.o1.frequency.value = f; n.o2.frequency.value = f * 2;
+          const det = (p - ST.music.p) * 2600;
+          n.o1.detune.value = det; n.o2.detune.value = det;
+          n.gMus.gain.setTargetAtTime(0.5 * prox.music, ct, 0.06);
+          // pager: echte pocsag.wav loop
+          n.gP.gain.setTargetAtTime(0.65 * prox.pager, ct, 0.05);
+        }
+      };
+    },
+  };
+
+  // Morse-timing voor het CW-baken ("CQ "), 1 element per tijdseenheid
+  const MORSE_SEQ = (() => {
+    const seq = [];
+    for (const c of '-.-. --.- ') {       // C Q + pauze
+      if (c === '.') seq.push(1, 0);
+      else if (c === '-') seq.push(1, 1, 1, 0);
+      else seq.push(0, 0, 0, 0, 0, 0);
+    }
+    return seq;
+  })();
+
+  /* ---- WebAudio voor de tuner ---- */
+  const tuner = { ctx: null, n: null, on: false };
+  function tunerEnsureAudio() {
+    if (tuner.ctx) return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain(); master.gain.value = 0.7; master.connect(ctx.destination);
+    // ruisvloer
+    const nb = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const nd = nb.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource(); noise.buffer = nb; noise.loop = true;
+    const gNoise = ctx.createGain(); gNoise.gain.value = 0.2;
+    noise.connect(gNoise).connect(master); noise.start();
+    // CW-baken
+    const oM = ctx.createOscillator(); oM.frequency.value = 600;
+    const gM = ctx.createGain(); gM.gain.value = 0;
+    oM.connect(gM).connect(master); oM.start();
+    // FM-muziekzender (synth)
+    const o1 = ctx.createOscillator(); o1.type = 'triangle';
+    const o2 = ctx.createOscillator(); o2.type = 'sine';
+    const oB = ctx.createOscillator(); oB.frequency.value = 110;
+    const gB = ctx.createGain(); gB.gain.value = 0.35;
+    const gMus = ctx.createGain(); gMus.gain.value = 0;
+    o1.connect(gMus); o2.connect(gMus); oB.connect(gB).connect(gMus);
+    gMus.connect(master); o1.start(); o2.start(); oB.start();
+    // pager: echte gesynthetiseerde opname in een loop
+    const gP = ctx.createGain(); gP.gain.value = 0; gP.connect(master);
+    const startPagerBuf = buf => {
+      const src = ctx.createBufferSource();
+      src.buffer = buf; src.loop = true; src.connect(gP); src.start();
+    };
+    const synthPagerBuf = () => {
+      // fallback: FSK-bursts direct synthetiseren (zelfde idee als make_audio.py)
+      const sr = ctx.sampleRate, dur = 4, buf = ctx.createBuffer(1, sr * dur, sr);
+      const d = buf.getChannelData(0);
+      let ph = 0;
+      for (let i = 0; i < d.length; i++) {
+        const t = i / sr;
+        const inBurst = (t % 2) < 0.8;
+        if (!inBurst) { d[i] = (Math.random() - 0.5) * 0.06; continue; }
+        const bitIdx = Math.floor(t * 1200);
+        const bit = bitIdx < 120 ? bitIdx % 2 : (Math.sin(bitIdx * 127.1) * 43758.5453) % 1 > 0;
+        ph += 2 * Math.PI * (bit ? 1200 : 2200) / sr;
+        d[i] = Math.sin(ph) * 0.9;
+      }
+      return buf;
+    };
+    fetch('assets/pocsag.wav').then(r => r.arrayBuffer())
+      .then(b => ctx.decodeAudioData(b))
+      .then(startPagerBuf)
+      .catch(() => startPagerBuf(synthPagerBuf()));
+    tuner.ctx = ctx;
+    tuner.n = { gNoise, oM, gM, o1, o2, gMus, gP, master };
+  }
+  function tunerSetOn(on) {
+    const btn = document.getElementById('tunerAudioBtn');
+    tuner.on = on;
+    if (!tuner.ctx) return;
+    if (on) tuner.ctx.resume(); else tuner.ctx.suspend();
+    btn.textContent = on ? '🔇 audio uit' : '🔊 audio aan';
+    btn.classList.toggle('on', on);
+  }
+  document.getElementById('tunerAudioBtn').addEventListener('click', () => {
+    tunerEnsureAudio();
+    tunerSetOn(!tuner.on);
+  });
+  // pijltjestoetsen op sliders mogen de presentatie niet door-navigeren
+  document.querySelectorAll('.reveal input[type=range]').forEach(s =>
+    s.addEventListener('keydown', e => e.stopPropagation()));
+
+  // start/stop beheer: alleen animeren wat op de huidige slide staat
+  let activeDraws = [], rafId = null;
+  function animLoop(ts) {
+    for (const d of activeDraws) {
+      try { d(ts / 1000); }
+      catch (e) { console.error('anim-fout:', e); }   // één kapotte animatie mag de rest niet stoppen
+    }
+    rafId = requestAnimationFrame(animLoop);
+  }
+  function switchAnims(slide) {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    activeDraws = [];
+    // tuner-audio dempen zodra je de tuner-slide verlaat
+    if (tuner.on && !slide.querySelector('#animTuner')) tunerSetOn(false);
+    slide.querySelectorAll('canvas.anim').forEach(cv => {
+      const f = animFactories[cv.id];
+      if (f) activeDraws.push(f(cv));
+    });
+    if (activeDraws.length) rafId = requestAnimationFrame(animLoop);
+  }
+  Reveal.on('ready', e => switchAnims(e.currentSlide));
+  Reveal.on('slidechanged', e => switchAnims(e.currentSlide));
+</script>
+</body>
+</html>

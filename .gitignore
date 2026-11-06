@@ -1,0 +1,6 @@
+# Python virtualenv (alleen nodig om graphics/audio opnieuw te genereren)
+.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
