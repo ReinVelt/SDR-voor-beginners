@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDR — Software Defined Radio | Van beginner tot gevorderde</title>
+  <title>SDR-cursus — Software Defined Radio | Van beginner tot gevorderde</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css">
@@ -66,6 +66,8 @@
     .crumb b { color: #4fc3f7; }
     .keybox { background: #0d3321; border-left: 6px solid #66bb6a; padding: .45em .8em; border-radius: 6px; font-size: .68em; margin-top: .6em; }
     .quiz-q { background: #1a2744; border-radius: 10px; padding: .5em .9em; margin-bottom: .5em; }
+    .lab { background: #122540; border-left: 6px solid #4fc3f7; padding: .5em .9em; border-radius: 6px; font-size: .72em; margin-bottom: .5em; }
+    .lesmeta { font-size: .55em; color: #abc; display: flex; gap: 2em; justify-content: center; margin-top: 1em; }
     .freq-table td, .freq-table th { padding: .15em .5em !important; }
   </style>
 </head>
@@ -76,7 +78,7 @@
 <!-- ============ 1. TITEL ============ -->
 <section class="center-slide">
   <h1>📻 Software Defined Radio</h1>
-  <h3>Van radiogolven naar bits — voor beginners én gevorderden</h3>
+  <h3>Een hands-on cursus — van radiogolven naar bits</h3>
   <canvas class="anim" id="animTitle" width="960" height="150"></canvas>
   <p class="small">Radio basics · SDR · Tools · Data-analyse · Demo's</p>
   <p class="small" style="margin-top:.8em"><b>Rein Velt</b> · Hackerspace Drenthe</p>
@@ -84,23 +86,24 @@
   <aside class="notes">Welkom! Vraag wie er al eens een SDR-dongle heeft gebruikt — dat bepaalt het tempo.</aside>
 </section>
 
-<!-- ============ 2. AGENDA ============ -->
+<!-- ============ 2. CURSUSOVERZICHT ============ -->
 <section>
-  <h2>Agenda</h2>
-  <ol>
-    <li><b>Radio basics</b> — golven, frequentie, modulatie <span class="badge">beginner</span></li>
-    <li><b>Wat is SDR?</b> — architectuur, IQ-sampling <span class="badge">beginner</span><span class="badge adv">gevorderd</span></li>
-    <li><b>Hardware</b> — RTL-SDR, HackRF, antennes</li>
-    <li><b>Software &amp; tools</b> — SDR++, GQRX, GNU Radio</li>
-    <li><b>Signalen decoderen</b> — ADS-B, POCSAG, weersatellieten</li>
-    <li><b>Data-analyse</b> — van IQ-bestand tot inzicht <span class="badge adv">gevorderd</span></li>
-    <li><b>Wetgeving</b> — wat mag (niet) in Nederland</li>
-    <li><b>Live demo's</b> 🎙️</li>
+  <h2>Cursusoverzicht 🎓</h2>
+  <ol class="small">
+    <li><a href="#/les1">Radio basics</a> — golven, spectrum, modulatie, dB <span class="tiny">⏱ 25 min</span> <span class="badge">beginner</span></li>
+    <li><a href="#/les2">Wat is SDR?</a> — architectuur, IQ, Nyquist <span class="tiny">⏱ 25 min</span> <span class="badge">beginner</span><span class="badge adv">gevorderd</span></li>
+    <li><a href="#/les3">Hardware</a> — RTL-SDR, HackRF, antennes <span class="tiny">⏱ 20 min</span></li>
+    <li><a href="#/les4">Software &amp; tools</a> — FFT, waterfall, GNU Radio <span class="tiny">⏱ 30 min</span></li>
+    <li><a href="#/les5">Signalen decoderen</a> — ADS-B, POCSAG, satellieten <span class="tiny">⏱ 40 min</span></li>
+    <li><a href="#/les6">Data-analyse</a> — van IQ tot inzicht <span class="tiny">⏱ 30 min</span> <span class="badge adv">gevorderd</span></li>
+    <li><a href="#/les7">Wetgeving</a> — wat mag (niet) in NL <span class="tiny">⏱ 15 min</span></li>
+    <li><a href="#/les8">Demo's &amp; eindopdracht</a> <span class="tiny">⏱ 25 min</span></li>
   </ol>
+  <p class="small" style="margin-top:.8em">🔬 Elke les sluit af met een <b>lab-opdracht</b> · ✋-slides zijn zelftoetsen · lesnummers hierboven zijn klikbaar</p>
 </section>
 
 <section>
-  <h2>Wat kun je ná vandaag? 🎯</h2>
+  <h2>Wat kun je na deze cursus? 🎯</h2>
   <ul>
     <li class="fragment">🧠 <b>Begrijpen</b> hoe radio werkt: golven, modulatie, spectrum, decibel</li>
     <li class="fragment">👀 <b>Herkennen</b> van signalen in een waterfall — en op het gehoor</li>
@@ -108,16 +111,17 @@
     <li class="fragment">📊 <b>Analyseren</b> van radiodata met Python en dashboards</li>
     <li class="fragment">⚖️ <b>Weten wat mag</b> — en waar de grens ligt</li>
   </ul>
-  <p class="small fragment" style="margin-top:1em">Beginner? Focus op de <span class="badge">groene</span> onderwerpen. Gevorderd? De <span class="badge adv">rode</span> geven verdieping — en onderweg checken we 3× of het landt. ✋</p>
-  <aside class="notes">Leerdoelen expliciet benoemen: het publiek weet dan waar het naartoe werkt en kan zelf prioriteren.</aside>
+  <p class="small fragment" style="margin-top:1em">Beginner? Focus op de <span class="badge">groene</span> onderwerpen. Gevorderd? De <span class="badge adv">rode</span> geven verdieping. Elke les eindigt met een 🔬 lab en onderweg zijn er ✋ zelftoetsen.</p>
+  <aside class="notes">Leerdoelen expliciet benoemen: cursisten weten dan waar ze naartoe werken en kunnen zelf prioriteren.</aside>
 </section>
 
 <!-- ============ DEEL 1: RADIO BASICS ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #0d47a1, #000)">
-  <h1>Deel 1</h1>
+<section class="center-slide" id="les1" data-background-gradient="linear-gradient(to bottom, #0d47a1, #000)">
+  <h1>Les 1</h1>
   <h2>Radio Basics</h2>
-  <p class="small">Wat is een radiogolf eigenlijk?</p>
-  <p class="crumb"><b>Basics</b> · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 25 min</span><span>🎒 alleen een browser</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je begrijpt golven, spectrum, modulatie en dB — en je hebt je eerste signalen beluisterd via een WebSDR.</p>
+  <p class="crumb"><b>Basics</b> · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · Eindopdracht</p>
 </section>
 
 <section>
@@ -211,14 +215,29 @@
   </ul>
   <div class="keybox fragment">🔑 Vuistregel om te onthouden: <b>λ in meters ≈ 300 / f in MHz</b></div>
   <aside class="notes">Laat de zaal eerst schatten voordat je de fragments toont.</aside>
+</section>
+
+<section>
+  <h2>🔬 Lab 1 — Luisteren zonder hardware</h2>
+  <div class="lab"><b>Opdracht (±15 min):</b> verken het kortegolfspectrum via de WebSDR van de Universiteit Twente — <b>websdr.ewi.utwente.nl:8901</b> (gratis, in je browser).</div>
+  <ol class="small">
+    <li>Tune naar <b>198 kHz</b> (AM): BBC Radio 4 op de lange golf</li>
+    <li>Zoek tussen <b>3.6–3.8 MHz</b> een Nederlands amateurgesprek — zet de modus op <b>LSB</b></li>
+    <li>Vind rond <b>14.0–14.1 MHz</b> een morse-signaal (modus CW)</li>
+    <li>Kijk per signaal naar de waterfall: hoe fel = hoeveel SNR?</li>
+  </ol>
+  <p class="ok small">✅ Klaar als je drie modulaties hebt gehoord: AM, SSB en CW — en het verschil kunt beschrijven.</p>
+  <p class="tiny">Bonus: tune naar 4625 kHz… hoor jij The Buzzer? 👻</p>
   <aside class="notes">Belangrijk voor later: in waterfall-weergaves kijk je altijd naar dB-schalen.</aside>
 </section>
 
 <!-- ============ DEEL 2: SDR ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #1b5e20, #000)">
-  <h1>Deel 2</h1>
+<section class="center-slide" id="les2" data-background-gradient="linear-gradient(to bottom, #1b5e20, #000)">
+  <h1>Les 2</h1>
   <h2>Wat is Software Defined Radio?</h2>
-  <p class="crumb">Basics · <b>SDR</b> · Hardware · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 25 min</span><span>🎒 browser (+ Python voor het lab)</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je begrijpt het SDR-blokschema, IQ-sampling en Nyquist — en je kunt aliasing voorspellen.</p>
+  <p class="crumb">Basics · <b>SDR</b> · Hardware · Tools · Decoderen · Data · Wetgeving · Eindopdracht</p>
 </section>
 
 <section data-auto-animate>
@@ -342,12 +361,27 @@
   <aside class="notes">Vraag 3 verrast meestal — goede opstap naar 'waarom SigMF en gericht opnemen'.</aside>
 </section>
 
+<section>
+  <h2>🔬 Lab 2 — Voorspel het spook</h2>
+  <div class="lab"><b>Opdracht (±10 min):</b> word aliasing-meester met de demo van zonet (2 slides terug).</div>
+  <ol class="small">
+    <li>Zet de samplerate-slider op <b>18</b> — voorspel éérst op papier de spookfrequentie (f − fs), check daarna</li>
+    <li>Herhaal voor <b>16</b> en <b>24</b> samples. Wanneer klopt je formule, wanneer "vouwt" hij?</li>
+    <li class="fragment">Python-bonus: sample een 440 Hz-toon op 600 Hz en luister:
+      <pre style="margin:.3em 0"><code class="language-python">import numpy as np, sounddevice as sd
+t = np.arange(0, 2, 1/600)                 # fs = 600 Hz
+sd.play(np.sin(2*np.pi*440*t), 600)        # hoor je 160 Hz?</code></pre></li>
+  </ol>
+  <p class="ok small">✅ Klaar als je de spookfrequentie 2× goed voorspelt vóór je de slider beweegt.</p>
+</section>
+
 <!-- ============ DEEL 3: HARDWARE ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #e65100, #000)">
-  <h1>Deel 3</h1>
+<section class="center-slide" id="les3" data-background-gradient="linear-gradient(to bottom, #e65100, #000)">
+  <h1>Les 3</h1>
   <h2>Hardware</h2>
-  <p class="small">RTL-SDR · HackRF · antennes</p>
-  <p class="crumb">Basics · SDR · <b>Hardware</b> · Tools · Decoderen · Data · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 20 min</span><span>🎒 RTL-SDR dongle (~€35)</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je kiest de juiste SDR en antenne — en je dongle werkt en ontvangt FM.</p>
+  <p class="crumb">Basics · SDR · <b>Hardware</b> · Tools · Decoderen · Data · Wetgeving · Eindopdracht</p>
 </section>
 
 <section>
@@ -426,11 +460,26 @@
   </div>
 </section>
 
+<section>
+  <h2>🔬 Lab 3 — Dongle aan de praat</h2>
+  <div class="lab"><b>Opdracht (±20 min):</b> krijg je RTL-SDR werkend en meet je eerste dB's.</div>
+  <ol class="small">
+    <li>Installeer <b>SDR++</b> · Windows: USB-driver via <b>Zadig</b> · Linux: <code class="inline">sudo apt install rtl-sdr</code></li>
+    <li>Test: <code class="inline">rtl_test -t</code> — geen "lost samples"? Dan ben je goed</li>
+    <li>Tune naar je sterkste lokale FM-zender — geluid? 🎉</li>
+    <li>Antenne-experiment: vergelijk de signaalsterkte <b>midden in de kamer</b> vs. <b>bij het raam</b> — hoeveel dB scheelt het?</li>
+  </ol>
+  <p class="ok small">✅ Klaar als FM speelt én je het raam-effect in dB kunt benoemen (meestal 6–15 dB!).</p>
+  <p class="tiny">Geen dongle? Doe het lab met een WebSDR en sla stap 1–2 over.</p>
+</section>
+
 <!-- ============ DEEL 4: SOFTWARE & TOOLS ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #4a148c, #000)">
-  <h1>Deel 4</h1>
+<section class="center-slide" id="les4" data-background-gradient="linear-gradient(to bottom, #4a148c, #000)">
+  <h1>Les 4</h1>
   <h2>Software &amp; tools</h2>
-  <p class="crumb">Basics · SDR · Hardware · <b>Tools</b> · Decoderen · Data · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 30 min</span><span>🎒 RTL-SDR + SDR++ / GNU Radio</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je leest een waterfall als een boek en bouwt je eerste GNU Radio flowgraph.</p>
+  <p class="crumb">Basics · SDR · Hardware · <b>Tools</b> · Decoderen · Data · Wetgeving · Eindopdracht</p>
 </section>
 
 <section>
@@ -579,12 +628,25 @@ FMRadio().run()</code></pre>
   </ul>
 </section>
 
+<section>
+  <h2>🔬 Lab 4 — Waterfall-safari + flowgraph</h2>
+  <div class="lab"><b>Opdracht (±25 min):</b> leer signalen herkennen aan hun "vingerafdruk" — en bouw je eerste radio.</div>
+  <ol class="small">
+    <li>Scan met SDR++ de band <b>430–440 MHz</b> en screenshot 3 verschillende signaalvormen in de waterfall</li>
+    <li>Zoek ze op bij <b>sigidwiki.com</b> — wat denk je dat het zijn?</li>
+    <li>Bouw in GNU Radio Companion de 5-bloks FM-ontvanger van deze les na en laat hem spélen</li>
+  </ol>
+  <p class="ok small">✅ Klaar als je flowgraph geluid geeft én je 2 van de 3 signalen hebt geïdentificeerd.</p>
+  <p class="tiny">Vast? De flowgraph staat als Python-voorbeeld in de cursus-repo (zie slotslide).</p>
+</section>
+
 <!-- ============ DEEL 5: SIGNALEN DECODEREN ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #b71c1c, #000)">
-  <h1>Deel 5</h1>
+<section class="center-slide" id="les5" data-background-gradient="linear-gradient(to bottom, #b71c1c, #000)">
+  <h1>Les 5</h1>
   <h2>Signalen decoderen</h2>
-  <p class="small">ADS-B · POCSAG · weersatellieten · sensoren</p>
-  <p class="crumb">Basics · SDR · Hardware · Tools · <b>Decoderen</b> · Data · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 40 min</span><span>🎒 RTL-SDR + rtl_433 / dump1090 / multimon-ng</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je hebt minstens één écht digitaal signaal gedecodeerd — vliegtuig, sensor of pager.</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · <b>Decoderen</b> · Data · Wetgeving · Eindopdracht</p>
 </section>
 
 <section>
@@ -804,12 +866,25 @@ rtl_fm -f 169.65M -s 22050 | \
   <div class="keybox fragment">🔑 Dit denkpatroon — <b>kijken → herkennen → decoderen → analyseren</b> — is de kern van álle SDR-projecten.</div>
 </section>
 
+<section>
+  <h2>🔬 Lab 5 — Kies je missie</h2>
+  <div class="lab"><b>Opdracht (±30 min):</b> decodeer één écht signaal. Kies de missie die bij je past:</div>
+  <ul class="small">
+    <li>✈️ <b>Missie A — vliegtuigen:</b> <code class="inline">dump1090 --interactive</code> → hoeveel vliegtuigen zie je, en wat is je verste ontvangst (km)?</li>
+    <li>🌡️ <b>Missie B — sensoren:</b> <code class="inline">rtl_433</code> → identificeer 3 apparaten in je omgeving (van wie is dat weerstation?)</li>
+    <li>📟 <b>Missie C — pagers:</b> <code class="inline">rtl_fm -f 169.65M -s 22050 | multimon-ng -t raw -a FLEX -</code> → tel de alarmeringen in 10 minuten (alleen kijken, niet delen!)</li>
+  </ul>
+  <p class="ok small">✅ Klaar als jouw missie echte, gedecodeerde data oplevert.</p>
+  <p class="tiny">Bonus: plan op n2yo.com een NOAA-pass van ≥ 60° elevatie voor morgen — en zet je wekker. 🛰️</p>
+</section>
+
 <!-- ============ DEEL 6: DATA-ANALYSE ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #006064, #000)">
-  <h1>Deel 6</h1>
+<section class="center-slide" id="les6" data-background-gradient="linear-gradient(to bottom, #006064, #000)">
+  <h1>Les 6</h1>
   <h2>Data-analyse</h2>
-  <p class="small">Van IQ-bestand tot inzicht</p>
-  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · <b>Data</b> · Wetgeving · Demo's</p>
+  <div class="lesmeta"><span>⏱ 30 min</span><span>🎒 Python + pandas</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je zet decoderdata om in grafieken en inzichten — van ruwe JSON tot antennediagram.</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · <b>Data</b> · Wetgeving · Eindopdracht</p>
 </section>
 
 <section>
@@ -945,11 +1020,31 @@ df.groupby(df.bearing.round(-1)).distance_km.max().plot(kind="polar")</code></pr
   <p class="small">Onderzoeksveld in opkomst — laagdrempelig om zelf mee te experimenteren omdat je je eigen trainingsdata kunt opnemen.</p>
 </section>
 
+<section>
+  <h2>🔬 Lab 6 — Van JSON naar inzicht</h2>
+  <div class="lab"><b>Opdracht (±20 min):</b> analyseer sensorlogs met pandas. Geen eigen data? De cursus-repo bevat een oefenset: <code class="inline">assets/sample_rtl433.jsonl</code> (24 uur, 3 sensoren).</div>
+  <pre><code class="language-python">import pandas as pd
+df = pd.read_json("assets/sample_rtl433.jsonl", lines=True)
+
+# 1. hoeveel berichten per sensor?
+print(df.model.value_counts())
+
+# 2. temperatuurverloop per sensor
+df.pivot_table(index="time", columns="model",
+               values="temperature_C").plot()
+
+# 3. jouw beurt: wanneer was de koudste 5-minuten? welke sensor
+#    hangt binnen? en wie heeft een zwakke batterij?</code></pre>
+  <p class="ok small">✅ Klaar als je plot 3 lijnen toont en je vraag 3 kunt beantwoorden met code.</p>
+</section>
+
 <!-- ============ DEEL 7: WETGEVING ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #f57f17, #000)">
-  <h1>Deel 7</h1>
+<section class="center-slide" id="les7" data-background-gradient="linear-gradient(to bottom, #f57f17, #000)">
+  <h1>Les 7</h1>
   <h2>Wetgeving in Nederland ⚖️</h2>
-  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · <b>Wetgeving</b> · Demo's</p>
+  <div class="lesmeta"><span>⏱ 15 min</span><span>🎒 niets — wel je geweten</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je weet wat mag, wat niet, en hoe je legaal gaat zenden (N-licentie).</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · <b>Wetgeving</b> · Eindopdracht</p>
 </section>
 
 <section>
@@ -993,11 +1088,25 @@ df.groupby(df.bearing.round(-1)).distance_km.max().plot(kind="polar")</code></pr
   <aside class="notes">Goede plek voor discussie met de zaal: waar ligt de grens?</aside>
 </section>
 
+<section>
+  <h2>🔬 Lab 7 — Mag dit? (casussen)</h2>
+  <div class="lab"><b>Opdracht (±10 min):</b> oordeel zelf, daarna het antwoord. Bespreek met je buur waarom.</div>
+  <ul class="small">
+    <li>1️⃣ Je leest met rtl_433 het weerstation van de buren uit. <span class="fragment"><b style="color:#66bb6a">Mag</b> — vrij ontvangbaar, geen persoonsgegevens. Netjes: vertel het ze, leuk gesprek!</span></li>
+    <li>2️⃣ Je zet P2000-meldingen mét adressen op social media. <span class="fragment"><b style="color:#ef5350">Mag niet</b> — persoonsgegevens verspreiden (AVG + Tw).</span></li>
+    <li>3️⃣ Je test je HackRF "heel even" op 433.92 MHz met 1 mW. <span class="fragment"><b style="color:#ef5350">Mag niet</b> — ISM vereist conforme apparatuur; gebruik een dummy load of kabel.</span></li>
+    <li>4️⃣ Met je N-licentie roep je CQ op 145.500 MHz. <span class="fragment"><b style="color:#66bb6a">Mag</b> — daar is de licentie voor. Vergeet je roepnaam niet!</span></li>
+  </ul>
+  <p class="ok small fragment">✅ Klaar als je bij elke casus het wetsartikel-gevoel kunt uitleggen: <i>ontvangen vrij · delen beperkt · zenden gereguleerd</i>.</p>
+</section>
+
 <!-- ============ DEEL 8: DEMO'S ============ -->
-<section class="center-slide" data-background-gradient="linear-gradient(to bottom, #880e4f, #000)">
-  <h1>Deel 8</h1>
-  <h2>Live demo's 🎙️</h2>
-  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · <b>Demo's</b></p>
+<section class="center-slide" id="les8" data-background-gradient="linear-gradient(to bottom, #880e4f, #000)">
+  <h1>Les 8</h1>
+  <h2>Demo's &amp; eindopdracht 🎙️</h2>
+  <div class="lesmeta"><span>⏱ 25 min + 2 weken eindopdracht</span></div>
+  <p class="small" style="margin-top:.6em">🎯 Na deze les: je hebt een plan voor je eigen ontvangststation — de eindopdracht van deze cursus.</p>
+  <p class="crumb">Basics · SDR · Hardware · Tools · Decoderen · Data · Wetgeving · <b>Eindopdracht</b></p>
 </section>
 
 <section>
@@ -1011,6 +1120,19 @@ df.groupby(df.bearing.round(-1)).distance_km.max().plot(kind="polar")</code></pr
   </ol>
   <p class="warn small">Backup-plan: IQ-opnames van thuis meenemen — demo's werken dan ook zonder ontvangst in de zaal (File Source in plaats van RTL-SDR Source).</p>
   <aside class="notes">Vooraf checken: USB-poorten, drivers (zadig op Windows), antennes bij het raam, opnames op schijf als fallback.</aside>
+</section>
+
+<section>
+  <h2>🏁 Eindopdracht — jouw eigen station</h2>
+  <div class="lab"><b>Capstone (2 weken):</b> bouw een ontvangststation, verzamel ≥ 48 uur data en presenteer je resultaat (5 min) in de hackerspace.</div>
+  <ol class="small">
+    <li class="fragment"><b>Kies je doel</b> — ADS-B, weersatelliet, buurt-sensoren of iets geks (radiosondes!)</li>
+    <li class="fragment"><b>Bouw/plaats je antenne</b> — en documenteer je keuze met de λ/4-regel</li>
+    <li class="fragment"><b>Log minimaal 48 uur</b> — JSON/SQLite, zoals in les 6</li>
+    <li class="fragment"><b>Maak één grafiek + één verhaal</b> — wat verraste je?</li>
+    <li class="fragment"><b>Presenteer</b> — 5 minuten, inclusief wat er mis ging (dat is het leerzaamst)</li>
+  </ol>
+  <p class="ok small fragment">🏆 Beoordeel jezelf: werkt het 48 uur stabiel? Kun je elke ontwerpkeuze uitleggen? Dan ben je officieel SDR-hobbyist.</p>
 </section>
 
 <!-- ============ AFSLUITING ============ -->
