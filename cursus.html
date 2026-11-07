@@ -37,6 +37,20 @@
   .chapter .lesmeta { background:#0008; backdrop-filter:blur(2px); max-width:34em; }
   .chapter .chgoal { max-width:34em; color:#dfe7ee; }
   .chapter .chdown { margin-top:1.6em; color:#8a94a0; font-size:.8em; }
+  /* interactieve demo's */
+  .demo { background:#10141a; border:1px solid #2a3340; border-radius:12px; padding:.9em; margin:1.4em 0; }
+  .demo canvas { width:100%; display:block; border-radius:8px; background:#0a0f1a; }
+  .dbar { display:flex; gap:.9em; align-items:center; flex-wrap:wrap;
+          font:14px/1.3 system-ui,sans-serif; color:#abc; margin-top:.7em; }
+  .dbar label { white-space:nowrap; }
+  .dbar input[type=range] { flex:1; min-width:7em; accent-color:#4fc3f7; }
+  .dbar input[type=text] { background:#1b2430; border:1px solid #2a3340; color:#dfe7ee;
+          border-radius:6px; padding:.35em .6em; font:inherit; flex:1; min-width:8em; }
+  .dbar button, .dbar select { background:#0d47a1; color:#fff; border:1.5px solid #4fc3f7;
+          border-radius:7px; padding:.35em .9em; font:inherit; cursor:pointer; }
+  .dbar button.on { background:#1b5e20; border-color:#66bb6a; }
+  .dbar .dval { min-width:4.5em; text-align:right; color:#ffd54f; }
+  .dcap { font-size:.78em; color:#9fc; margin:.5em 0 0; font-family:system-ui,sans-serif; }
   .key { background:#0d3321; border-left:5px solid var(--ok); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
   .warn { background:#3a2420; border-left:5px solid var(--warn); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
   .lab { background:#122540; border-left:5px solid var(--accent); padding:.8em 1.1em; border-radius:6px; margin:1.6em 0; }
@@ -109,6 +123,14 @@ radiocommunicatie komt neer op het slim variëren van precies deze drie dingen:<
 <figure>
 <img src="assets/cursus_golf.png" alt="Anatomie van een golf">
 </figure>
+<div class="demo">
+  <canvas id="cWave" width="900" height="230"></canvas>
+  <div class="dbar">
+    <label>frequentie</label><input type="range" id="cWaveF" min="1" max="14" value="4">
+    <label>amplitude</label><input type="range" id="cWaveA" min="10" max="100" value="70">
+  </div>
+  <p class="dcap">🎛️ Draai zelf: meer frequentie = kortere golven, meer amplitude = hogere toppen. De fase zie je als de golf voorbijloopt.</p>
+</div>
 
 <p>Frequentie en golflengte zijn twee kanten van dezelfde medaille: hoe sneller de golf trilt,
 hoe korter elke golf is. De handigste formule van deze hele cursus is daarom:</p>
@@ -154,6 +176,13 @@ bits. In de <a href="index.html#/7">interactieve slides</a> zie je alle drie liv
 <figure>
 <img src="assets/cursus_modulatie.png" alt="AM, FM en FSK vergeleken">
 </figure>
+<div class="demo">
+  <canvas id="cMod" width="900" height="300"></canvas>
+  <div class="dbar">
+    <label>boodschap-tempo</label><input type="range" id="cModS" min="2" max="20" value="9">
+  </div>
+  <p class="dcap">🎛️ Live gemoduleerd: dezelfde boodschap (versnel hem maar) als AM-envelop, FM-frequentievariatie en FSK-bits.</p>
+</div>
 
 <h3>Decibel: de taal van signaalsterkte</h3>
 <p>Radiosignalen verschillen onvoorstelbaar veel in sterkte. Je wifi-router zendt met zo'n
@@ -167,6 +196,27 @@ vraagt 20&nbsp;dB. Probeer het zelf in de <a href="index.html#/9">SNR-speeltuin<
 <figure>
 <img src="assets/cursus_snr.png" alt="SNR: signaal boven de ruisvloer">
 </figure>
+<div class="demo">
+  <canvas id="cSNR" width="900" height="270"></canvas>
+  <div class="dbar">
+    <label>SNR</label><input type="range" id="cSNRs" min="0" max="40" value="25">
+    <span class="dval" id="cSNRv">25 dB</span>
+  </div>
+  <p class="dcap">🎛️ Schuif het signaal de ruis in en zie welke toepassingen afhaken — elke modulatie heeft zijn eigen minimum.</p>
+</div>
+
+<p>En omdat morse het oudste én taaiste digitale signaal is (CW komt door ruis waar alles
+faalt — een geoefend oor decodeert bij SNR's waar FM allang zwijgt), mag je het meteen zelf
+proberen:</p>
+<div class="demo">
+  <canvas id="cMorse" width="900" height="150"></canvas>
+  <div class="dbar">
+    <input type="text" id="cMorseT" value="HALLO ETHER" maxlength="24">
+    <label>tempo</label><input type="range" id="cMorseW" min="8" max="30" value="15">
+    <button id="cMorseB">▶ seinen</button>
+  </div>
+  <p class="dcap">🎛️ Typ een tekst en hoor (en zie) hem in morse — zo klinkt jouw naam op 600 Hz.</p>
+</div>
 
 <div class="lab">
 <h4>🔬 Lab 1 — Luisteren zonder hardware (±15 min)</h4>
@@ -235,6 +285,14 @@ zien gebeuren.</p>
 <figure>
 <img src="assets/cursus_iq.png" alt="IQ-sampling: fasor en de twee metingen">
 </figure>
+<div class="demo">
+  <canvas id="cIQ" width="900" height="260"></canvas>
+  <div class="dbar">
+    <label>frequentie</label><input type="range" id="cIQf" min="-30" max="30" value="12">
+    <span class="dval" id="cIQv"></span>
+  </div>
+  <p class="dcap">🎛️ Het draaiende wijzertje. Let op: schuif hem eens <b>negatief</b> — het wijzertje draait andersom. Dát is waarom IQ-ontvangers negatieve frequenties kunnen onderscheiden (en dus de volle samplerate aan bandbreedte zien).</p>
+</div>
 <p>Plot je de IQ-punten van een digitaal signaal op de beslismomenten, dan verschijnen de
 symbolen als wolkjes — het <em>constellatiediagram</em>. Hoe meer wolkjes, hoe meer bits per
 symbool, en hoe gevoeliger voor ruis:</p>
@@ -243,6 +301,16 @@ symbool, en hoe gevoeliger voor ruis:</p>
 <figcaption>Drie digitale modulaties met ruis: BPSK (1 bit/symbool), QPSK (2) en 16-QAM (4).
 Wifi en 5G gaan adaptief tot 1024-QAM — alleen bij uitstekende SNR.</figcaption>
 </figure>
+<div class="demo">
+  <canvas id="cConst" width="900" height="290"></canvas>
+  <div class="dbar">
+    <label>modulatie</label>
+    <select id="cConstM"><option value="qpsk">QPSK (2 bits)</option><option value="qam16">16-QAM (4 bits)</option></select>
+    <label>SNR</label><input type="range" id="cConstS" min="4" max="30" value="18">
+    <span class="dval" id="cConstV">18 dB</span>
+  </div>
+  <p class="dcap">🎛️ Draai aan de ruis en wissel van modulatie. Rode punten = symboolfouten. Zie hoe 16-QAM véél eerder sneuvelt dan QPSK — precies de afweging die je telefoon continu maakt.</p>
+</div>
 <div class="key">🔑 Te onthouden: IQ-samples zijn de ruwe grondstof van alles wat volgt.
 De waterfall, het audiosignaal, de gedecodeerde vliegtuigposities — alles wordt eruit berekend.</div>
 
@@ -256,6 +324,14 @@ sampled immers ook).</p>
 <figure>
 <img src="assets/cursus_aliasing.png" alt="Aliasing: het spook-signaal">
 </figure>
+<div class="demo">
+  <canvas id="cAlias" width="900" height="270"></canvas>
+  <div class="dbar">
+    <label>samplerate</label><input type="range" id="cAliasS" min="6" max="48" value="44">
+    <span class="dval" id="cAliasV"></span>
+  </div>
+  <p class="dcap">🎛️ Zak met de samplerate onder 2× de signaalfrequentie (20) en zie het spook verschijnen — het loopt wiskundig exact door dezelfde samplepunten.</p>
+</div>
 <p>Voor SDR's met IQ-samples geldt een prettige vuistregel: <b>de samplerate is de breedte
 van het spectrum dat je tegelijk ziet</b>. Een RTL-SDR op 2,4&nbsp;MS/s laat 2,4&nbsp;MHz
 spectrum zien. Daar hangt wel een prijskaartje aan: 2,4 miljoen samples van 2 bytes per
@@ -389,15 +465,28 @@ begrijpelijks: hij werkt als een prisma dat wit licht in kleuren splitst, maar d
 geluid en radio — hij splitst het signaal in de frequenties waaruit het bestaat. Eén FFT is
 één momentopname van het spectrum. Plak duizenden van die momentopnames onder elkaar en je
 krijgt de <b>waterfall</b>: frequentie horizontaal, tijd verticaal, signaalsterkte als kleur.
-Je oor doet trouwens precies hetzelfde: trillingen in, tonen eruit. Speel met de
-<a href="index.html#/23">live FFT-demo</a> om het gevoel te krijgen.</p>
+Je oor doet trouwens precies hetzelfde: trillingen in, tonen eruit.</p>
+<div class="demo">
+  <canvas id="cFFT" width="900" height="280"></canvas>
+  <div class="dbar">
+    <label>toon 1</label><input type="range" id="cFFT1" min="2" max="28" value="7">
+    <label>toon 2</label><input type="range" id="cFFT2" min="2" max="28" value="14">
+    <label>ruis</label><input type="range" id="cFFTn" min="0" max="60" value="8">
+  </div>
+  <p class="dcap">🎛️ Een échte DFT, live berekend: links twee tonen door elkaar (plus ruis), rechts hoe de FFT ze feilloos uit elkaar haalt. Schuif de tonen over elkaar heen — of verdrink ze in ruis.</p>
+</div>
 
 <h3>De waterfall lezen</h3>
 <p>De waterfall is je belangrijkste venster op de ether, en na een paar avonden herken je
 signalen op het oog, nog vóór je ze hoort. Een smalle rechte streep: een FM-draaggolf van een
 portofoon of baken. Een brede wollige band: FM-omroep met muziek. Korte felle blokjes die
 komen en gaan: pager-bursts of sensoren. Stippen die over de band springen: een frequency
-hopper. Hieronder een echte opname — gemaakt met precies dezelfde FFT-bewerking die SDR++
+hopper. Zo ziet dat eruit — live:</p>
+<div class="demo">
+  <canvas id="cWf" width="900" height="300"></canvas>
+  <p class="dcap">Live gesimuleerde waterfall: twee smalle FM-draaggolven · breedband FM · pager-bursts · een frequency hopper.</p>
+</div>
+<p>En hieronder een echte opname — gemaakt met precies dezelfde FFT-bewerking die SDR++
 gebruikt:</p>
 <figure>
 <img src="assets/waterfall_real.png" alt="Waterfall van een 2,4 MHz opname">
@@ -417,9 +506,18 @@ zijn de signalen die in de waterfall als strepen verschijnen.</figcaption>
 <p>📻 Over een FM-zender heen draaien:</p>
 <audio controls preload="none" src="assets/fm_tuning.wav"></audio>
 
-<p>Wil je dit zelf ervaren zonder dongle? In de slides zit een
-<a href="index.html#/33">speelbare tuner</a>: sleep over de band, vind de morse-baken, de
-muziekzender en de pager — met echte detuning-effecten.</p>
+<p>Wil je dit zelf ervaren zonder dongle? Hieronder staat een complete speelbare ontvanger:
+sleep over de band, vind de morse-baken, de muziekzender en de pager — met echte
+detuning-effecten via WebAudio:</p>
+<div class="demo">
+  <canvas id="cTuner" width="900" height="300"></canvas>
+  <div class="dbar">
+    <button id="cTunerB">🔊 audio aan</button>
+    <input type="range" id="cTunerF" min="0" max="1000" value="80">
+    <span class="dval" id="cTunerV">88.0 MHz</span>
+  </div>
+  <p class="dcap">🎛️ Jouw eerste (virtuele) SDR: boven het spectrum, onder de waterfall. Net naast een zender? Dan hoor je hem vervormd — precies zoals in het echt.</p>
+</div>
 
 <h3>Het tool-landschap</h3>
 <p>Voor elke taak bestaat een gratis opensource-tool. Luisteren en verkennen doe je met
@@ -485,6 +583,10 @@ antenne hoort — is onweerstaanbaar. Met een dakantenne haal je 200 tot 400 kil
 1090&nbsp;MHz geldt: zichtlijn. Websites als Flightradar24 zijn in feite duizenden van zulke
 hobby-ontvangers aan elkaar geknoopt; lever jij data, dan krijg je er een gratis
 premium-account voor terug.</p>
+<div class="demo">
+  <canvas id="cRadar" width="900" height="300"></canvas>
+  <p class="dcap">Zo ziet jouw ontvangst eruit: links de vliegtuigen die je antenne hoort (ringen = 100/200 km), rechts de ruwe Mode-S berichten zoals dump1090 ze decodeert.</p>
+</div>
 
 <h3>Pagers leven nog: POCSAG en P2000</h3>
 <p>Het piepersysteem uit de jaren tachtig is springlevend: ziekenhuizen en hulpdiensten
@@ -501,6 +603,10 @@ camerabeeld uit op 137&nbsp;MHz — analoog, ontworpen in de jaren zeventig, en 
 zelfgebouwde antenne van vijf euro aan draad te ontvangen. Een satelliet is per overkomst
 zo'n twaalf minuten te horen; plan de pass met n2yo.com, neem op met SatDump, en je hebt je
 eigen satellietfoto van Europa.</p>
+<div class="demo">
+  <canvas id="cPass" width="900" height="300"></canvas>
+  <p class="dcap">Hoe een pass werkt: de satelliet is alleen hoorbaar boven jouw horizon (groene boog). Rechts bouwt de elevatiecurve zich op — hoe hoger de piek, hoe beter je beeld.</p>
+</div>
 <figure>
 <img src="assets/noaa19_apt.jpg" alt="Echt ontvangen NOAA-19 beeld">
 <figcaption>Geen stockfoto: een écht met RTL-SDR ontvangen NOAA-19 APT-beeld
@@ -733,5 +839,569 @@ Bronnen: <a href="https://pysdr.org">pysdr.org</a> · <a href="https://www.rtl-s
   <a href="index.html">slides</a> · <a href="https://github.com/ReinVelt/SDR-voor-beginners">GitHub</a><br>
   Tekst: CC BY-SA 4.0 · foto-credits bij de afbeeldingen
 </footer>
+
+<script>
+/* ============ interactieve demo's — alleen actief als ze in beeld zijn ============ */
+const $ = id => document.getElementById(id);
+
+// turbo-achtige kleurenmap voor waterfalls
+const LUT = (() => {
+  const s = [[10,10,40],[25,50,140],[20,130,210],[40,200,160],[170,230,60],[250,200,40],[255,110,20],[230,30,30]];
+  const lut = [];
+  for (let i = 0; i < 256; i++) {
+    const x = i / 255 * (s.length - 1), j = Math.min(Math.floor(x), s.length - 2), f = x - j;
+    lut.push([0,1,2].map(k => Math.round(s[j][k]*(1-f) + s[j+1][k]*f)));
+  }
+  return lut;
+})();
+const gauss = (x, mu, sig) => Math.exp(-((x - mu) ** 2) / (2 * sig * sig));
+const randn = () => (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.7;
+
+function reg(id, factory) {
+  const cv = $(id); if (!cv) return;
+  let draw = null, raf = null;
+  const loop = ts => {
+    try { (draw ??= factory(cv))(ts / 1000); }
+    catch (e) { console.error(id, e); return; }
+    raf = requestAnimationFrame(loop);
+  };
+  new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { if (!raf) raf = requestAnimationFrame(loop); }
+    else if (raf) { cancelAnimationFrame(raf); raf = null; }
+  }), { threshold: 0.05 }).observe(cv);
+}
+
+/* ---- les 1: golf met frequentie/amplitude ---- */
+reg('cWave', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  return t => {
+    const f = +$('cWaveF').value, A = +$('cWaveA').value / 100 * (h/2 - 28);
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#333'; g.beginPath(); g.moveTo(0, h/2); g.lineTo(w, h/2); g.stroke();
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 2.6; g.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const y = h/2 - A * Math.sin(2*Math.PI*f*x/w - 3*t);
+      x ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.fillStyle = '#9ab'; g.font = '15px sans-serif';
+    g.fillText(`f = ${f} (golflengte = breedte/${f})  ·  amplitude = ${$('cWaveA').value}%`, 16, 24);
+  };
+});
+
+/* ---- les 1: AM/FM/FSK live ---- */
+reg('cMod', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height, row = h/3;
+  const bit = x => (Math.sin(x*7.3)*43758.5453) % 1 > 0 ? 1 : 0;
+  return t => {
+    const spd = +$('cModS').value / 9;
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.font = '17px sans-serif';
+    const msg = x => Math.sin(0.012*spd*x - 1.8*spd*t);
+    g.fillStyle = '#aaa'; g.fillText('AM', 12, row*0.56);
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 2; g.beginPath();
+    for (let x = 58; x <= w-8; x += 1.5) {
+      const y = row*0.5 - (0.55 + 0.4*msg(x)) * row*0.38 * Math.sin(0.25*x - 14*t);
+      x > 58 ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.fillStyle = '#aaa'; g.fillText('FM', 12, row*1.56);
+    let ph = -10*t;
+    g.strokeStyle = '#66bb6a'; g.beginPath();
+    for (let x = 58; x <= w-8; x += 1.5) {
+      ph += 0.22 * (1 + 0.55*msg(x)) * 1.5;
+      const y = row*1.5 - row*0.36*Math.sin(ph);
+      x > 58 ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.fillStyle = '#aaa'; g.fillText('FSK', 12, row*2.56);
+    let ph2 = 0; const shift = Math.floor(28*spd*t); let last = -1;
+    g.strokeStyle = '#ffb74d'; g.beginPath();
+    for (let x = 58; x <= w-8; x += 1.5) {
+      const b = bit(Math.floor((x + shift*1.5) / 70));
+      ph2 += (b ? 0.42 : 0.15) * 1.5;
+      const y = row*2.5 - row*0.36*Math.sin(ph2);
+      x > 58 ? g.lineTo(x, y) : g.moveTo(x, y);
+      if (b !== last && x > 58) { g.fillStyle = '#ffb74d'; g.fillText(String(b), x, row*2.12); last = b; }
+      if (last === -1) last = b;
+    }
+    g.stroke();
+  };
+});
+
+/* ---- les 1: SNR-speeltuin ---- */
+reg('cSNR', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  return t => {
+    const snr = +$('cSNRs').value;
+    $('cSNRv').textContent = snr + ' dB';
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    const floorY = h - 48, pxDb = (h - 95) / 40;
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 1.6; g.beginPath();
+    for (let x = 0; x < w; x += 2) {
+      const sig = snr * gauss(x, w*0.46, 24);
+      const v = sig + (Math.random()*6 - 3) * (1 - 0.6*gauss(x, w*0.46, 24));
+      const y = floorY - v*pxDb;
+      x ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.strokeStyle = '#555'; g.setLineDash([6,6]);
+    g.beginPath(); g.moveTo(0, floorY); g.lineTo(w, floorY); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#888'; g.font = '15px sans-serif'; g.fillText('ruisvloer', 14, floorY + 21);
+    const checks = [['FM-audio luisterbaar', 5], ['POCSAG decodeerbaar', 10], ['ADS-B decodeerbaar', 14], ['satellietbeeld schoon', 20]];
+    g.font = '16px sans-serif';
+    checks.forEach(([n, m], i) => {
+      g.fillStyle = snr >= m ? '#66bb6a' : '#ef5350';
+      g.fillText((snr >= m ? '✔ ' : '✘ ') + n + ' (≥' + m + ' dB)', 24, 30 + i*25);
+    });
+  };
+});
+
+/* ---- les 1: morse-speeltuin ---- */
+const MORSE = {A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',
+  K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',
+  V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..','0':'-----','1':'.----','2':'..---','3':'...--',
+  '4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',' ':' '};
+const morseState = { timeline: [], t0: 0, dur: 0, ctx: null };
+function morseTimeline(txt, wpm) {
+  const u = 1.2 / wpm, tl = []; let t = 0.15;
+  for (const ch of txt.toUpperCase()) {
+    const code = MORSE[ch];
+    if (ch === ' ') { t += 4*u; continue; }
+    if (!code) continue;
+    for (const s of code) { const d = (s === '.' ? 1 : 3) * u; tl.push([t, d, s]); t += d + u; }
+    t += 2*u;
+  }
+  return { tl, dur: t };
+}
+$('cMorseB')?.addEventListener('click', () => {
+  morseState.ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+  const ctx = morseState.ctx; ctx.resume();
+  const { tl, dur } = morseTimeline($('cMorseT').value || 'SOS', +$('cMorseW').value);
+  const osc = ctx.createOscillator(); osc.frequency.value = 600;
+  const gn = ctx.createGain(); gn.gain.value = 0;
+  osc.connect(gn).connect(ctx.destination); osc.start();
+  const now = ctx.currentTime + 0.05;
+  for (const [t, d] of tl) {
+    gn.gain.setTargetAtTime(0.4, now + t, 0.004);
+    gn.gain.setTargetAtTime(0, now + t + d, 0.004);
+  }
+  osc.stop(now + dur + 0.5);
+  morseState.timeline = tl; morseState.dur = dur; morseState.t0 = performance.now()/1000 + 0.05;
+});
+reg('cMorse', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  return t => {
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    const { timeline, t0, dur } = morseState;
+    g.font = '15px sans-serif';
+    if (!timeline.length) { g.fillStyle = '#789'; g.fillText('druk op ▶ seinen…', 20, h/2); return; }
+    const scale = (w - 40) / Math.max(dur, 1);
+    const el = t - t0;
+    for (const [ts, d, s] of timeline) {
+      const on = el >= ts && el < ts + d;
+      g.fillStyle = on ? '#ffd54f' : '#2d6cb5';
+      const y = s === '.' ? h/2 - 9 : h/2 - 5;
+      g.fillRect(20 + ts*scale, s === '.' ? h/2 - 9 : h/2 - 4, Math.max(3, d*scale - 2), s === '.' ? 18 : 8);
+    }
+    if (el >= 0 && el <= dur) {
+      g.strokeStyle = '#ffd54f'; g.beginPath();
+      g.moveTo(20 + el*scale, 14); g.lineTo(20 + el*scale, h - 14); g.stroke();
+    }
+    g.fillStyle = '#789';
+    g.fillText('korte blokjes = dit (·) · lange = dah (—)', 20, h - 10);
+  };
+});
+
+/* ---- les 2: IQ-fasor met instelbare (ook negatieve!) frequentie ---- */
+reg('cIQ', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const cx = 125, cy = h/2, R = 85;
+  const hist = [];
+  let ph = 0, lastT = null;
+  return t => {
+    const f = +$('cIQf').value / 10;
+    $('cIQv').textContent = (f >= 0 ? '+' : '') + f.toFixed(1) + ' Hz';
+    if (lastT !== null) ph += 2*Math.PI*f*(t - lastT);
+    lastT = t;
+    const I = Math.cos(ph), Q = Math.sin(ph);
+    hist.unshift({I, Q}); if (hist.length > 300) hist.pop();
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#444'; g.lineWidth = 1.5;
+    g.beginPath(); g.arc(cx, cy, R, 0, 7); g.stroke();
+    g.beginPath(); g.moveTo(cx-R-12, cy); g.lineTo(cx+R+12, cy); g.moveTo(cx, cy-R-10); g.lineTo(cx, cy+R+10); g.stroke();
+    const px = cx + R*I, py = cy - R*Q;
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(cx, cy); g.lineTo(px, py); g.stroke();
+    g.fillStyle = '#ffb74d'; g.beginPath(); g.arc(px, py, 6, 0, 7); g.fill();
+    const x0 = 280, tw = w - x0 - 16;
+    const trace = (get, col, y0) => {
+      g.strokeStyle = col; g.lineWidth = 2; g.beginPath();
+      hist.forEach((s, i) => {
+        const x = x0 + i/300*tw, y = y0 - get(s)*34;
+        i ? g.lineTo(x, y) : g.moveTo(x, y);
+      });
+      g.stroke();
+    };
+    trace(s => s.I, '#ffb74d', h/2 - 50);
+    trace(s => s.Q, '#66bb6a', h/2 + 58);
+    g.font = '15px sans-serif';
+    g.fillStyle = '#ffb74d'; g.fillText('I', x0 + tw + 4, h/2 - 45);
+    g.fillStyle = '#66bb6a'; g.fillText('Q', x0 + tw + 4, h/2 + 63);
+    g.fillStyle = '#9ab';
+    g.fillText(f >= 0 ? 'draait linksom = positieve frequentie' : 'draait rechtsom = negatieve frequentie!', 280, 24);
+  };
+});
+
+/* ---- les 2: constellatie met modulatie-keuze ---- */
+reg('cConst', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const cx = h/2 + 30, cy = h/2, R = h*0.36;
+  g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+  let errs = 0, tot = 0;
+  const lv4 = [-3,-1,1,3].map(v => v/Math.sqrt(10));
+  return t => {
+    const snr = +$('cConstS').value, mode = $('cConstM').value;
+    $('cConstV').textContent = snr + ' dB';
+    g.fillStyle = 'rgba(10,15,26,0.12)'; g.fillRect(0, 0, h + 70, h);
+    g.fillStyle = '#0a0f1a'; g.fillRect(h + 70, 0, w - h - 70, h);
+    g.strokeStyle = '#333'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(cx - R*1.25, cy); g.lineTo(cx + R*1.25, cy);
+    g.moveTo(cx, cy - R*1.25); g.lineTo(cx, cy + R*1.25); g.stroke();
+    const sigma = Math.pow(10, -snr/20) * 1.9;
+    const ideal = [];
+    if (mode === 'qpsk') { for (const a of [1,-1]) for (const b of [1,-1]) ideal.push([a/Math.SQRT2, b/Math.SQRT2]); }
+    else { for (const a of lv4) for (const b of lv4) ideal.push([a, b]); }
+    const nearest = (I, Q) => {
+      let best = 0, bd = 1e9;
+      ideal.forEach(([a,b], i) => { const d = (I-a)**2 + (Q-b)**2; if (d < bd) { bd = d; best = i; } });
+      return best;
+    };
+    for (let i = 0; i < 40; i++) {
+      const k = Math.floor(Math.random()*ideal.length);
+      const [ai, aq] = ideal[k];
+      const I = ai + randn()*sigma, Q = aq + randn()*sigma;
+      const fout = nearest(I, Q) !== k;
+      tot++; if (fout) errs++;
+      g.fillStyle = fout ? '#ef5350' : '#4fc3f7';
+      g.beginPath(); g.arc(cx + I*R*0.85, cy - Q*R*0.85, 2.3, 0, 7); g.fill();
+    }
+    g.strokeStyle = '#ffb74d'; g.lineWidth = 1.4;
+    for (const [a, b] of ideal) {
+      const px = cx + a*R*0.85, py = cy - b*R*0.85;
+      g.beginPath(); g.moveTo(px-6, py); g.lineTo(px+6, py); g.moveTo(px, py-6); g.lineTo(px, py+6); g.stroke();
+    }
+    if (tot > 4000) { errs = Math.round(errs/2); tot = Math.round(tot/2); }
+    const ber = errs/Math.max(1, tot);
+    g.font = '18px sans-serif'; g.fillStyle = '#ddd';
+    g.fillText((mode === 'qpsk' ? 'QPSK · 2' : '16-QAM · 4') + ' bits per symbool', h + 95, 55);
+    g.fillText('symboolfouten: ' + (ber*100).toFixed(2) + ' %', h + 95, 95);
+    g.font = '15px sans-serif';
+    const v = ber < 0.001 ? ['✔ vlekkeloos', '#66bb6a'] : ber < 0.05 ? ['⚠ foutcorrectie redt het nog', '#ffb74d'] : ['✘ onbruikbaar → lagere modulatie', '#ef5350'];
+    g.fillStyle = v[1]; g.fillText(v[0], h + 95, 135);
+  };
+});
+
+/* ---- les 2: aliasing ---- */
+reg('cAlias', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const F0 = 10;
+  return t => {
+    const fs = +$('cAliasS').value, ok = fs >= 2*F0;
+    const vEl = $('cAliasV');
+    vEl.textContent = fs + ' S ' + (ok ? '✔' : '✘');
+    vEl.style.color = ok ? '#66bb6a' : '#ef5350';
+    const ph = 0.6*t, mid = h/2 + 12, amp = h*0.3;
+    const sig = x => Math.sin(2*Math.PI*F0*x/w + ph);
+    const fa = F0 - Math.round(F0/fs)*fs;
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.font = '15px sans-serif';
+    g.fillStyle = '#4fc3f7'; g.fillText('echt signaal: 10 cycli', 16, 24);
+    g.fillStyle = ok ? '#66bb6a' : '#ff7043';
+    g.fillText(ok ? 'reconstructie klopt (Nyquist gehaald)' : 'spook-signaal op ' + Math.abs(fa).toFixed(1) + ' cycli!', 250, 24);
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 2; g.beginPath();
+    for (let x = 0; x <= w; x += 2) { const y = mid - amp*sig(x); x ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+    g.strokeStyle = ok ? '#66bb6a' : '#ff7043'; g.lineWidth = 2.4; g.setLineDash([7,5]); g.beginPath();
+    for (let x = 0; x <= w; x += 2) { const y = mid - amp*Math.sin(2*Math.PI*fa*x/w + ph); x ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ffb74d';
+    for (let i = 0; i <= fs; i++) {
+      const x = i*w/fs, y = mid - amp*sig(x);
+      g.beginPath(); g.arc(x, y, 4.5, 0, 7); g.fill();
+    }
+  };
+});
+
+/* ---- les 4: live FFT met 2 tonen + ruis ---- */
+reg('cFFT', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const N = 128, BINS = 32;
+  const noiseBuf = new Float64Array(N);
+  return t => {
+    const f1 = +$('cFFT1').value, f2 = +$('cFFT2').value, nz = +$('cFFTn').value / 100;
+    const ph = 2.2*t;
+    for (let n = 0; n < N; n++) noiseBuf[n] = (Math.random()*2 - 1) * nz;
+    const x = n => Math.sin(2*Math.PI*f1*n/N + ph) + 0.8*Math.sin(2*Math.PI*f2*n/N + 0.7*ph) + noiseBuf[n];
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.font = '14px sans-serif';
+    g.fillStyle = '#aaa'; g.fillText('tijd', 20, 20);
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 2; g.beginPath();
+    for (let n = 0; n < N; n++) {
+      const px = 20 + n/N*370, py = h/2 + 12 - x(n)*h*0.17;
+      n ? g.lineTo(px, py) : g.moveTo(px, py);
+    }
+    g.stroke();
+    g.fillStyle = '#ffb74d'; g.font = '22px sans-serif'; g.fillText('→ FFT →', 405, h/2 + 18);
+    g.font = '14px sans-serif'; g.fillStyle = '#aaa'; g.fillText('frequentie', 530, 20);
+    for (let k = 1; k <= BINS; k++) {
+      let re = 0, im = 0;
+      for (let n = 0; n < N; n++) { const v = x(n), a = 2*Math.PI*k*n/N; re += v*Math.cos(a); im -= v*Math.sin(a); }
+      const mag = Math.sqrt(re*re + im*im)/(N/2);
+      const bx = 530 + (k-1)*11, bh = Math.min(1, mag)*(h - 85);
+      g.fillStyle = (k === f1) ? '#ffb74d' : (k === f2 ? '#66bb6a' : '#2d6cb5');
+      g.fillRect(bx, h - 42 - bh, 8.5, bh);
+    }
+    g.strokeStyle = '#555'; g.beginPath(); g.moveTo(525, h - 41); g.lineTo(890, h - 41); g.stroke();
+  };
+});
+
+/* ---- les 4: live waterfall ---- */
+reg('cWf', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+  const row = g.createImageData(w, 1);
+  const st = { pOn: false, pT: 0, hop: 0.78, hT: 0 };
+  return t => {
+    for (let r = 0; r < 2; r++) {
+      g.drawImage(cv, 0, 0, w, h-1, 0, 1, w, h-1);
+      if (t > st.pT) { st.pOn = !st.pOn; st.pT = t + (st.pOn ? 0.5 + Math.random() : 0.4 + Math.random()*1.5); }
+      if (t > st.hT) { st.hop = 0.70 + Math.floor(Math.random()*5)*0.045; st.hT = t + 0.35; }
+      const wob = Math.sin(1.3*t + r)*2;
+      for (let x = 0; x < w; x++) {
+        let v = 0.07 + Math.random()*0.16;
+        v += 0.85*gauss(x, 0.16*w, 2.2) + 0.7*gauss(x, 0.20*w, 2.2);
+        v += (0.55 + 0.35*Math.random())*gauss(x, 0.40*w + wob, 13);
+        if (st.pOn) v += 0.8*gauss(x, 0.58*w, 2.6);
+        v += 0.75*gauss(x, st.hop*w, 3.2);
+        const c = LUT[Math.min(255, Math.floor(v*230))], o = x*4;
+        row.data[o] = c[0]; row.data[o+1] = c[1]; row.data[o+2] = c[2]; row.data[o+3] = 255;
+      }
+      g.putImageData(row, 0, 0);
+    }
+  };
+});
+
+/* ---- les 4: speelbare tuner met WebAudio ---- */
+const tuner = { ctx: null, n: null, on: false };
+const TMORSE = (() => {
+  const seq = [];
+  for (const c of '-.-. --.- ') {
+    if (c === '.') seq.push(1, 0);
+    else if (c === '-') seq.push(1, 1, 1, 0);
+    else seq.push(0, 0, 0, 0, 0, 0);
+  }
+  return seq;
+})();
+function tunerAudio() {
+  if (tuner.ctx) return;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const master = ctx.createGain(); master.gain.value = 0.7; master.connect(ctx.destination);
+  const nb = ctx.createBuffer(1, ctx.sampleRate*2, ctx.sampleRate);
+  const nd = nb.getChannelData(0);
+  for (let i = 0; i < nd.length; i++) nd[i] = Math.random()*2 - 1;
+  const noise = ctx.createBufferSource(); noise.buffer = nb; noise.loop = true;
+  const gNoise = ctx.createGain(); gNoise.gain.value = 0.2;
+  noise.connect(gNoise).connect(master); noise.start();
+  const oM = ctx.createOscillator(); oM.frequency.value = 600;
+  const gM = ctx.createGain(); gM.gain.value = 0;
+  oM.connect(gM).connect(master); oM.start();
+  const o1 = ctx.createOscillator(); o1.type = 'triangle';
+  const o2 = ctx.createOscillator();
+  const oB = ctx.createOscillator(); oB.frequency.value = 110;
+  const gB = ctx.createGain(); gB.gain.value = 0.35;
+  const gMus = ctx.createGain(); gMus.gain.value = 0;
+  o1.connect(gMus); o2.connect(gMus); oB.connect(gB).connect(gMus);
+  gMus.connect(master); o1.start(); o2.start(); oB.start();
+  const gP = ctx.createGain(); gP.gain.value = 0; gP.connect(master);
+  const startBuf = buf => { const s = ctx.createBufferSource(); s.buffer = buf; s.loop = true; s.connect(gP); s.start(); };
+  const synthPager = () => {
+    const sr = ctx.sampleRate, buf = ctx.createBuffer(1, sr*4, sr), d = buf.getChannelData(0);
+    let ph = 0;
+    for (let i = 0; i < d.length; i++) {
+      const tt = i/sr;
+      if ((tt % 2) >= 0.8) { d[i] = (Math.random()-0.5)*0.06; continue; }
+      const bi = Math.floor(tt*1200);
+      const b = bi < 120 ? bi % 2 : (Math.sin(bi*127.1)*43758.5453) % 1 > 0;
+      ph += 2*Math.PI*(b ? 1200 : 2200)/sr;
+      d[i] = Math.sin(ph)*0.9;
+    }
+    return buf;
+  };
+  fetch('assets/pocsag.wav').then(r => r.arrayBuffer()).then(b => ctx.decodeAudioData(b))
+    .then(startBuf).catch(() => startBuf(synthPager()));
+  tuner.ctx = ctx; tuner.n = { gNoise, oM, gM, o1, o2, gMus, gP };
+}
+$('cTunerB')?.addEventListener('click', () => {
+  tunerAudio();
+  tuner.on = !tuner.on;
+  if (tuner.on) tuner.ctx.resume(); else tuner.ctx.suspend();
+  $('cTunerB').textContent = tuner.on ? '🔇 audio uit' : '🔊 audio aan';
+  $('cTunerB').classList.toggle('on', tuner.on);
+});
+reg('cTuner', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const SPEC_H = 165, WF_Y = 182, WF_H = h - WF_Y;
+  g.fillStyle = '#000'; g.fillRect(0, WF_Y, w, WF_H);
+  const row = g.createImageData(w, 1);
+  const ST = {
+    morse: { p: 0.22, w: 3,  name: 'CW-baken' },
+    music: { p: 0.52, w: 16, name: 'FM-zender' },
+    pager: { p: 0.82, w: 4,  name: 'pager' },
+  };
+  const NOTES = [220, 262, 294, 330, 392, 330, 294, 262];
+  return t => {
+    const p = $('cTunerF').value / 1000;
+    $('cTunerV').textContent = (88 + 20*p).toFixed(1) + ' MHz';
+    const morseGate = TMORSE[Math.floor(t/0.09) % TMORSE.length];
+    const burstOn = (t % 3.2) < 1.3;
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, SPEC_H + 12);
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 1.5; g.beginPath();
+    const amp = x => {
+      let v = 0.1 + Math.random()*0.1;
+      v += (morseGate ? 0.75 : 0.06)*gauss(x, ST.morse.p*w, ST.morse.w);
+      v += (0.68 + 0.22*Math.random())*gauss(x, ST.music.p*w, ST.music.w);
+      v += (burstOn ? 0.8 : 0.04)*gauss(x, ST.pager.p*w, ST.pager.w);
+      return v;
+    };
+    const vals = [];
+    for (let x = 0; x < w; x += 2) {
+      const v = amp(x); vals.push(v);
+      const y = SPEC_H - v*(SPEC_H - 20);
+      x ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.font = '13px sans-serif'; g.textAlign = 'center'; g.fillStyle = '#9ab';
+    for (const s of Object.values(ST)) g.fillText(s.name, s.p*w, 15);
+    g.textAlign = 'left';
+    g.drawImage(cv, 0, WF_Y, w, WF_H-1, 0, WF_Y+1, w, WF_H-1);
+    for (let x = 0; x < w; x++) {
+      const v = vals[Math.min(vals.length-1, x >> 1)];
+      const c = LUT[Math.min(255, Math.floor(v*235))], o = x*4;
+      row.data[o] = c[0]; row.data[o+1] = c[1]; row.data[o+2] = c[2]; row.data[o+3] = 255;
+    }
+    g.putImageData(row, 0, WF_Y);
+    const tx = p*w;
+    g.strokeStyle = '#ffb74d'; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(tx, 18); g.lineTo(tx, WF_Y - 2); g.stroke();
+    g.fillStyle = '#ffb74d'; g.beginPath();
+    g.moveTo(tx-6, 18); g.lineTo(tx+6, 18); g.lineTo(tx, 29); g.fill();
+    if (tuner.ctx && tuner.on) {
+      const n = tuner.n, ct = tuner.ctx.currentTime;
+      const prox = {}; let maxP = 0;
+      for (const [k, s] of Object.entries(ST)) {
+        prox[k] = Math.exp(-((p - s.p) ** 2) / (2*(s.w/w*2.2) ** 2));
+        maxP = Math.max(maxP, prox[k]);
+      }
+      n.gNoise.gain.setTargetAtTime(0.03 + 0.2*(1 - 0.92*maxP), ct, 0.08);
+      n.oM.frequency.value = 600 + (p - ST.morse.p)*9000;
+      n.gM.gain.setTargetAtTime(morseGate ? 0.45*prox.morse : 0, ct, 0.01);
+      const f = NOTES[Math.floor(t/0.3) % NOTES.length];
+      n.o1.frequency.value = f; n.o2.frequency.value = f*2;
+      const det = (p - ST.music.p)*2600;
+      n.o1.detune.value = det; n.o2.detune.value = det;
+      n.gMus.gain.setTargetAtTime(0.5*prox.music, ct, 0.06);
+      n.gP.gain.setTargetAtTime(0.65*prox.pager, ct, 0.05);
+    }
+  };
+});
+
+/* ---- les 5: ADS-B radar ---- */
+reg('cRadar', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const cx = h/2 + 16, cy = h/2, R = h*0.44;
+  const CS = ['KLM1023', 'RYR88Q', 'EZY45', 'TRA5P', 'DLH402'];
+  const planes = CS.map((cs, i) => ({ cs, a: i*1.26 + 0.5, r: 0.35 + 0.12*i, hd: Math.random()*6.28, trail: [], tLog: 0 }));
+  const log = [];
+  const hex = n => Math.floor(Math.random()*16**n).toString(16).padStart(n, '0');
+  return t => {
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#1d3a26'; g.lineWidth = 1.5;
+    for (const f of [0.5, 1]) { g.beginPath(); g.arc(cx, cy, R*f, 0, 7); g.stroke(); }
+    g.fillStyle = '#3a6648'; g.font = '12px sans-serif';
+    g.fillText('100 km', cx + R*0.5 - 22, cy - 6); g.fillText('200 km', cx + R - 24, cy - 6);
+    const sw = (1.1*t) % (2*Math.PI);
+    g.strokeStyle = '#66bb6a'; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + R*Math.cos(sw), cy + R*Math.sin(sw)); g.stroke();
+    g.fillStyle = '#4fc3f7'; g.beginPath(); g.arc(cx, cy, 4, 0, 7); g.fill();
+    for (const p of planes) {
+      p.a += 0.0008*Math.cos(p.hd); p.r += 0.0004*Math.sin(p.hd);
+      if (p.r > 0.95 || p.r < 0.15) p.hd += Math.PI/2;
+      const px = cx + R*p.r*Math.cos(p.a), py = cy + R*p.r*Math.sin(p.a);
+      p.trail.push([px, py]); if (p.trail.length > 36) p.trail.shift();
+      g.strokeStyle = '#4fc3f744'; g.lineWidth = 2; g.beginPath();
+      p.trail.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y));
+      g.stroke();
+      g.fillStyle = '#ffb74d'; g.font = '14px sans-serif'; g.fillText('✈', px - 7, py + 5);
+      g.fillStyle = '#9ab'; g.font = '11px sans-serif'; g.fillText(p.cs, px + 8, py + 4);
+      if (t - p.tLog > 1.4 + Math.random()) {
+        p.tLog = t;
+        log.unshift('*8d' + hex(6) + '58' + hex(8) + ';  ' + p.cs + '  FL' + (180 + Math.floor(Math.random()*180)));
+        if (log.length > 9) log.pop();
+      }
+    }
+    g.font = '13px monospace';
+    g.fillStyle = '#789'; g.fillText('dump1090 — Mode-S berichten (1090 MHz):', h + 50, 28);
+    log.forEach((l, i) => {
+      g.fillStyle = 'rgba(160,220,170,' + Math.max(0.15, 1 - i*0.11) + ')';
+      g.fillText(l, h + 50, 54 + i*25);
+    });
+  };
+});
+
+/* ---- les 5: satellietpass ---- */
+reg('cPass', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const ex = 195, ey = h/2 + 8, RE = 84, RO = 138;
+  const gsA = -Math.PI/2;
+  const gx = ex + RE*Math.cos(gsA), gy = ey + RE*Math.sin(gsA);
+  const hist = [];
+  return t => {
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    const grad = g.createRadialGradient(ex-18, ey-18, 10, ex, ey, RE);
+    grad.addColorStop(0, '#2d6cb5'); grad.addColorStop(1, '#0d3321');
+    g.fillStyle = grad; g.beginPath(); g.arc(ex, ey, RE, 0, 7); g.fill();
+    g.strokeStyle = '#444'; g.setLineDash([4,5]); g.lineWidth = 1.5;
+    g.beginPath(); g.arc(ex, ey, RO, 0, 7); g.stroke(); g.setLineDash([]);
+    const horiz = Math.acos(RE/RO) + 0.12;
+    g.strokeStyle = '#66bb6a66'; g.lineWidth = 7;
+    g.beginPath(); g.arc(ex, ey, RO, gsA - horiz, gsA + horiz); g.stroke(); g.lineWidth = 1.5;
+    const sa = gsA + ((0.35*t) % (2*Math.PI)) - Math.PI;
+    const sx = ex + RO*Math.cos(sa), sy = ey + RO*Math.sin(sa);
+    const d = Math.abs(((sa - gsA) % (2*Math.PI) + 3*Math.PI) % (2*Math.PI) - Math.PI);
+    const vis = d < horiz;
+    const elev = vis ? Math.max(0, 90*(1 - d/horiz)) : 0;
+    if (vis) {
+      g.strokeStyle = '#66bb6a'; g.setLineDash([3,4]);
+      g.beginPath(); g.moveTo(gx, gy); g.lineTo(sx, sy); g.stroke(); g.setLineDash([]);
+    }
+    g.font = '18px sans-serif'; g.fillText('🛰️', sx - 10, sy + 6);
+    g.font = '13px sans-serif'; g.fillText('📡', gx - 7, gy - 7);
+    g.fillStyle = vis ? '#66bb6a' : '#789';
+    g.fillText(vis ? '🔊 IN ZICHT — elevatie ' + elev.toFixed(0) + '°' : 'achter de horizon…', 50, 26);
+    hist.push(elev); if (hist.length > 440) hist.shift();
+    const px0 = 410, pw = 460, py0 = h - 46, phh = h - 108;
+    g.strokeStyle = '#555'; g.beginPath(); g.moveTo(px0, py0); g.lineTo(px0 + pw, py0); g.stroke();
+    g.fillStyle = '#789'; g.fillText('horizon (0°)', px0 + pw - 80, py0 + 19);
+    g.fillText('elevatie ↑  (tijd →)', px0, 50);
+    g.strokeStyle = '#4fc3f7'; g.lineWidth = 2; g.beginPath();
+    hist.forEach((e, i) => {
+      const x = px0 + i/440*pw, y = py0 - e/90*phh;
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    });
+    g.stroke();
+  };
+});
+</script>
 </body>
 </html>
