@@ -26,6 +26,17 @@
   pre { background:#10141a; border:1px solid #2a3340; border-radius:8px; padding:1em; overflow-x:auto; }
   pre code { background:none; padding:0; color:#cde; font-size:.8em; }
   .lesmeta { background:#1b2430; border-radius:10px; padding:.7em 1em; font-size:.85em; color:#abc; margin:.8em 0 1.2em; }
+  /* hoofdstukpagina's */
+  .chapter { min-height:88vh; display:flex; flex-direction:column; justify-content:center; align-items:center;
+             text-align:center; border-radius:18px; margin:3.5em -1.2em 2.5em; padding:2em 1.5em;
+             background:linear-gradient(165deg, var(--c1,#0d47a1) 0%, #15181d 72%); }
+  .chapter .chicon { font-size:4.5em; line-height:1; margin-bottom:.15em; filter:drop-shadow(0 4px 14px #0008); }
+  .chapter .chnum { letter-spacing:.45em; text-transform:uppercase; color:#ffd54f; font-size:.9em; margin-bottom:.4em; }
+  .chapter h2 { border:none; margin:.05em 0; font-size:2.6em; color:#fff; }
+  .chapter .chsub { color:#bcd; font-style:italic; font-size:1.15em; margin:.2em 0 1.4em; }
+  .chapter .lesmeta { background:#0008; backdrop-filter:blur(2px); max-width:34em; }
+  .chapter .chgoal { max-width:34em; color:#dfe7ee; }
+  .chapter .chdown { margin-top:1.6em; color:#8a94a0; font-size:.8em; }
   .key { background:#0d3321; border-left:5px solid var(--ok); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
   .warn { background:#3a2420; border-left:5px solid var(--warn); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
   .lab { background:#122540; border-left:5px solid var(--accent); padding:.8em 1.1em; border-radius:6px; margin:1.6em 0; }
@@ -69,9 +80,16 @@ begrijpen.</em></p>
 </nav>
 
 <!-- ================================================================ LES 1 -->
-<h2 id="les1">Les 1 · Radio basics — de onzichtbare zee</h2>
-<div class="lesmeta">⏱ 25 minuten lezen + 15 minuten lab · 🎒 alleen een browser nodig ·
-🎯 na deze les begrijp je golven, spectrum, modulatie en decibel, en heb je je eerste signalen beluisterd</div>
+<section class="chapter" id="les1" style="--c1:#0d47a1">
+  <div class="chicon">📻</div>
+  <div class="chnum">Les 1</div>
+  <h2>Radio Basics</h2>
+  <p class="chsub">De onzichtbare zee</p>
+  <div class="lesmeta">⏱ 25 minuten lezen + 15 minuten lab · 🎒 alleen een browser nodig</div>
+  <p class="chgoal">🎯 Na deze les begrijp je golven, spectrum, modulatie en decibel — en heb
+  je je eerste signalen beluisterd via een WebSDR.</p>
+  <p class="chdown">⌄ scroll om te beginnen</p>
+</section>
 
 <h3>Radio is licht (maar dan trager)</h3>
 <p>Radiogolven zijn hetzelfde natuurkundige verschijnsel als licht: elektromagnetische golven.
@@ -176,9 +194,16 @@ een kwartgolf-antennepoot wordt dus ~55 cm.<br>
 </details>
 
 <!-- ================================================================ LES 2 -->
-<h2 id="les2">Les 2 · Wat is Software Defined Radio?</h2>
-<div class="lesmeta">⏱ 25 min + 10 min lab · 🎒 browser, Python voor de bonus ·
-🎯 na deze les begrijp je het SDR-principe, IQ-sampling en Nyquist — en kun je aliasing voorspellen</div>
+<section class="chapter" id="les2" style="--c1:#1b5e20">
+  <div class="chicon">💻</div>
+  <div class="chnum">Les 2</div>
+  <h2>Wat is Software Defined Radio?</h2>
+  <p class="chsub">Hardware wordt software</p>
+  <div class="lesmeta">⏱ 25 min + 10 min lab · 🎒 browser, Python voor de bonus</div>
+  <p class="chgoal">🎯 Na deze les begrijp je het SDR-principe, IQ-sampling en Nyquist — en
+  kun je aliasing voorspellen.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <h3>Van soldeerbout naar software</h3>
 <p>Een klassieke radio is een keten van gespecialiseerde hardware: een filter pikt de band
@@ -260,9 +285,16 @@ het signaal kent — meer informatie bestaat er niet.</b></p>
 </details>
 
 <!-- ================================================================ LES 3 -->
-<h2 id="les3">Les 3 · Hardware — dongles en antennes</h2>
-<div class="lesmeta">⏱ 20 min + 20 min lab · 🎒 RTL-SDR dongle (~€35, optioneel) ·
-🎯 na deze les kies je de juiste SDR en antenne, en ontvangt je dongle zijn eerste signaal</div>
+<section class="chapter" id="les3" style="--c1:#e65100">
+  <div class="chicon">🔌</div>
+  <div class="chnum">Les 3</div>
+  <h2>Hardware</h2>
+  <p class="chsub">Dongles en antennes</p>
+  <div class="lesmeta">⏱ 20 min + 20 min lab · 🎒 RTL-SDR dongle (~€35, optioneel)</div>
+  <p class="chgoal">🎯 Na deze les kies je de juiste SDR en antenne, en ontvangt je dongle
+  zijn eerste signaal.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <h3>De gelukkigste vergissing van de radiogeschiedenis</h3>
 <p>In 2012 ontdekten hackers iets moois: een goedkope USB-stick voor digitale tv (DVB-T),
@@ -339,9 +371,16 @@ lab via een WebSDR.</p>
 </div>
 
 <!-- ================================================================ LES 4 -->
-<h2 id="les4">Les 4 · Tools — van FFT tot GNU Radio</h2>
-<div class="lesmeta">⏱ 30 min + 25 min lab · 🎒 RTL-SDR + SDR++, GNU Radio ·
-🎯 na deze les lees je een waterfall als een boek en bouw je je eerste flowgraph</div>
+<section class="chapter" id="les4" style="--c1:#4a148c">
+  <div class="chicon">🛠️</div>
+  <div class="chnum">Les 4</div>
+  <h2>Software &amp; tools</h2>
+  <p class="chsub">Van FFT tot GNU Radio</p>
+  <div class="lesmeta">⏱ 30 min + 25 min lab · 🎒 RTL-SDR + SDR++, GNU Radio</div>
+  <p class="chgoal">🎯 Na deze les lees je een waterfall als een boek en bouw je je eerste
+  flowgraph.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <h3>Eerst even: wat doet een FFT?</h3>
 <p>Je SDR levert alleen maar samples in de tijd — een eindeloze rij getallen. Daar ziet een
@@ -426,9 +465,16 @@ geïdentificeerd.</p>
 </div>
 
 <!-- ================================================================ LES 5 -->
-<h2 id="les5">Les 5 · Signalen decoderen</h2>
-<div class="lesmeta">⏱ 40 min + 30 min lab · 🎒 RTL-SDR + dump1090 / rtl_433 / multimon-ng ·
-🎯 na deze les heb je minstens één écht digitaal signaal gedecodeerd</div>
+<section class="chapter" id="les5" style="--c1:#b71c1c">
+  <div class="chicon">🛰️</div>
+  <div class="chnum">Les 5</div>
+  <h2>Signalen decoderen</h2>
+  <p class="chsub">De ether leert praten</p>
+  <div class="lesmeta">⏱ 40 min + 30 min lab · 🎒 RTL-SDR + dump1090 / rtl_433 / multimon-ng</div>
+  <p class="chgoal">🎯 Na deze les heb je minstens één écht digitaal signaal gedecodeerd —
+  vliegtuig, sensor of pager.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <h3>Vliegtuigen volgen: ADS-B</h3>
 <p>Elk verkeersvliegtuig roept twee keer per seconde zijn positie, hoogte, snelheid en
@@ -506,9 +552,15 @@ een NOAA-pass van ≥ 60° elevatie en zet je wekker.</em> 🛰️</p>
 </div>
 
 <!-- ================================================================ LES 6 -->
-<h2 id="les6">Les 6 · Data-analyse — van ether naar inzicht</h2>
-<div class="lesmeta">⏱ 30 min + 20 min lab · 🎒 Python met pandas ·
-🎯 na deze les zet je decoderdata om in grafieken en inzichten</div>
+<section class="chapter" id="les6" style="--c1:#006064">
+  <div class="chicon">📊</div>
+  <div class="chnum">Les 6</div>
+  <h2>Data-analyse</h2>
+  <p class="chsub">Van ether naar inzicht</p>
+  <div class="lesmeta">⏱ 30 min + 20 min lab · 🎒 Python met pandas</div>
+  <p class="chgoal">🎯 Na deze les zet je decoderdata om in grafieken en inzichten.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <h3>De pipeline</h3>
 <p>Alles wat je tot nu toe deed past in één keten: antenne → IQ-samples → DSP (filteren,
@@ -570,9 +622,15 @@ df.pivot_table(index="time", columns="model",
 </div>
 
 <!-- ================================================================ LES 7 -->
-<h2 id="les7">Les 7 · Wetgeving en ethiek</h2>
-<div class="lesmeta">⏱ 15 min + 10 min casussen · 🎯 na deze les weet je wat mag, wat niet,
-en hoe je legaal gaat zenden</div>
+<section class="chapter" id="les7" style="--c1:#f57f17">
+  <div class="chicon">⚖️</div>
+  <div class="chnum">Les 7</div>
+  <h2>Wetgeving en ethiek</h2>
+  <p class="chsub">Wat mag — en wat niet</p>
+  <div class="lesmeta">⏱ 15 min + 10 min casussen · 🎒 niets, wel je geweten</div>
+  <p class="chgoal">🎯 Na deze les weet je wat mag, wat niet, en hoe je legaal gaat zenden.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <p>De korte samenvatting van het Nederlandse recht past in drie woorden:
 <b>ontvangen vrij · delen beperkt · zenden gereguleerd</b>. De uitwerking:</p>
@@ -617,9 +675,15 @@ niet.</details>
 </div>
 
 <!-- ================================================================ LES 8 -->
-<h2 id="les8">Les 8 · Eindopdracht — jouw eigen station</h2>
-<div class="lesmeta">⏱ 2 weken · 🎒 alles uit les 1–7 ·
-🎯 een werkend ontvangststation, 48 uur data en een verhaal van 5 minuten</div>
+<section class="chapter" id="les8" style="--c1:#880e4f">
+  <div class="chicon">🏁</div>
+  <div class="chnum">Les 8</div>
+  <h2>Eindopdracht</h2>
+  <p class="chsub">Jouw eigen station</p>
+  <div class="lesmeta">⏱ 2 weken · 🎒 alles uit les 1–7</div>
+  <p class="chgoal">🎯 Een werkend ontvangststation, 48 uur data en een verhaal van 5 minuten.</p>
+  <p class="chdown">⌄</p>
+</section>
 
 <p>Alles komt samen in de capstone. Je bouwt een ontvangststation rond een zelfgekozen doel —
 vliegtuigen, een weersatelliet, de sensoren in je straat, of iets geks zoals radiosondes van
