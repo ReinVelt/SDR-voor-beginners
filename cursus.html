@@ -88,6 +88,9 @@ radiocommunicatie komt neer op het slim variëren van precies deze drie dingen:<
   <li><b>Frequentie</b> — hoe snel hij trilt (vergelijk: de toonhoogte);</li>
   <li><b>Fase</b> — waar in zijn cyclus de golf zich bevindt.</li>
 </ul>
+<figure>
+<img src="assets/cursus_golf.png" alt="Anatomie van een golf">
+</figure>
 
 <p>Frequentie en golflengte zijn twee kanten van dezelfde medaille: hoe sneller de golf trilt,
 hoe korter elke golf is. De handigste formule van deze hele cursus is daarom:</p>
@@ -109,6 +112,9 @@ soort bestemmingsplan voor de ether. Grofweg geldt: <b>lage frequenties reizen v
 buigen om obstakels heen en kaatsen zelfs tegen de ionosfeer, waardoor je 's nachts op de
 middengolf heel Europa hoort), terwijl <b>hoge frequenties meer informatie kunnen dragen</b>
 maar zichtlijn nodig hebben.</p>
+<figure>
+<img src="assets/cursus_bandkaart.png" alt="Het radiospectrum op logaritmische schaal">
+</figure>
 <table>
   <tr><th>Band</th><th>Frequentie</th><th>Typische bewoners</th></tr>
   <tr><td>LF/MF</td><td>30 kHz – 3 MHz</td><td>tijdseinzenders (DCF77), AM-omroep</td></tr>
@@ -127,6 +133,9 @@ varieert de frequentie; dat is ongevoeliger voor storing en klinkt daarom beter 
 Digitale signalen ten slotte laten de golf in sprongetjes verspringen — tussen twee frequenties
 (FSK), fasen (PSK) of combinaties van fase en amplitude (QAM). Elke sprong codeert één of meer
 bits. In de <a href="index.html#/7">interactieve slides</a> zie je alle drie live bewegen.</p>
+<figure>
+<img src="assets/cursus_modulatie.png" alt="AM, FM en FSK vergeleken">
+</figure>
 
 <h3>Decibel: de taal van signaalsterkte</h3>
 <p>Radiosignalen verschillen onvoorstelbaar veel in sterkte. Je wifi-router zendt met zo'n
@@ -137,6 +146,9 @@ er echt toe doet is de <b>signaal-ruisverhouding (SNR)</b>: hoe ver je signaal b
 altijd aanwezige ruisvloer uitsteekt. Niet de absolute sterkte, maar de SNR bepaalt of je iets
 kunt decoderen — FM-audio is al verstaanbaar bij zo'n 5&nbsp;dB, een schoon satellietbeeld
 vraagt 20&nbsp;dB. Probeer het zelf in de <a href="index.html#/9">SNR-speeltuin</a>.</p>
+<figure>
+<img src="assets/cursus_snr.png" alt="SNR: signaal boven de ruisvloer">
+</figure>
 
 <div class="lab">
 <h4>🔬 Lab 1 — Luisteren zonder hardware (±15 min)</h4>
@@ -182,6 +194,9 @@ demoduleren, decoderen, analyseren. Eén apparaat wordt duizend radio's. Een nie
 ontvangen betekent niet solderen, maar software updaten. Dat is de revolutie die radio-onderzoek
 democratiseerde: wat vroeger een lab met een spectrumanalyzer van tienduizend euro vereiste,
 doet nu een hobbyist met een dongle van 35 euro.</p>
+<figure>
+<img src="assets/cursus_blokschema.png" alt="Klassieke radio versus SDR">
+</figure>
 
 <h3>IQ-samples: de ruwe grondstof</h3>
 <p>Hier wordt het heel even wiskundig, maar het beeld is simpel. Een SDR meet het signaal niet
@@ -192,6 +207,17 @@ signaal, de hoek is de fase, en de draaisnelheid is de frequentie. Doordat je me
 amplitude én fase kent, kun je <em>elke denkbare modulatie</em> achteraf in software
 demoduleren. Kijk naar de <a href="index.html#/14">draaiende fasor in de slides</a> om dit te
 zien gebeuren.</p>
+<figure>
+<img src="assets/cursus_iq.png" alt="IQ-sampling: fasor en de twee metingen">
+</figure>
+<p>Plot je de IQ-punten van een digitaal signaal op de beslismomenten, dan verschijnen de
+symbolen als wolkjes — het <em>constellatiediagram</em>. Hoe meer wolkjes, hoe meer bits per
+symbool, en hoe gevoeliger voor ruis:</p>
+<figure>
+<img src="assets/constellations.png" alt="BPSK, QPSK en 16-QAM constellaties">
+<figcaption>Drie digitale modulaties met ruis: BPSK (1 bit/symbool), QPSK (2) en 16-QAM (4).
+Wifi en 5G gaan adaptief tot 1024-QAM — alleen bij uitstekende SNR.</figcaption>
+</figure>
 <div class="key">🔑 Te onthouden: IQ-samples zijn de ruwe grondstof van alles wat volgt.
 De waterfall, het audiosignaal, de gedecodeerde vliegtuigposities — alles wordt eruit berekend.</div>
 
@@ -202,6 +228,9 @@ verraderlijks: het signaal "vouwt terug" en verschijnt als <em>spook-signaal</em
 verkeerde frequentie — aliasing. Dat is geen theoretisch randgeval; het is de reden dat elke
 SDR filters heeft en dat wagenwielen in oude westerns achteruit lijken te draaien (een camera
 sampled immers ook).</p>
+<figure>
+<img src="assets/cursus_aliasing.png" alt="Aliasing: het spook-signaal">
+</figure>
 <p>Voor SDR's met IQ-samples geldt een prettige vuistregel: <b>de samplerate is de breedte
 van het spectrum dat je tegelijk ziet</b>. Een RTL-SDR op 2,4&nbsp;MS/s laat 2,4&nbsp;MHz
 spectrum zien. Daar hangt wel een prijskaartje aan: 2,4 miljoen samples van 2 bytes per
@@ -258,6 +287,11 @@ qua frequentie weg zodra ze warm worden.</p>
 <p>De <b>HackRF One</b> (±€300, open hardware) ontvangt van 1&nbsp;MHz tot 6&nbsp;GHz en kan
 ook <em>zenden</em>. Dat opent deuren — eigen protocollen testen, satellieten aanroepen met een
 amateurlicentie — maar schept ook verantwoordelijkheid.</p>
+<figure>
+<img src="assets/hackrf_photo.jpg" alt="HackRF One" style="max-width:55%">
+<figcaption>De HackRF One: 1 MHz – 6 GHz, zenden én ontvangen, volledig open hardware.
+Foto: Gareth Halfacree, CC BY 2.0.</figcaption>
+</figure>
 <div class="warn">⚠️ Zenden zonder vergunning is in Nederland illegaal, ook heel kort en op laag
 vermogen. Een HackRF die "even test" op een GPS- of luchtvaartfrequentie kan letterlijk levens
 in gevaar brengen. Experimenteer met een dummy load of een kabeltje — nooit met een antenne.
@@ -425,6 +459,14 @@ eigen satellietfoto van Europa.</p>
 <img src="assets/noaa19_apt.jpg" alt="Echt ontvangen NOAA-19 beeld">
 <figcaption>Geen stockfoto: een écht met RTL-SDR ontvangen NOAA-19 APT-beeld
 (137,100 MHz, 18 juni 2021). Links zichtbaar licht, rechts infrarood. Public domain (NOAA).</figcaption>
+</figure>
+<p>Het APT-formaat zelf stamt uit het analoge tijdperk en is daardoor heerlijk inzichtelijk:
+de satelliet zendt beeldlijn voor beeldlijn uit, telkens twee camerabeelden naast elkaar
+(zichtbaar licht en infrarood), voorafgegaan door synchronisatiepulsen waarmee de decoder elke
+lijn uitlijnt — de verticale streeppatronen:</p>
+<figure>
+<img src="assets/apt_sim.png" alt="Opbouw van het APT-beeldformaat">
+<figcaption>De opbouw van een APT-transmissie: sync | zichtbaar licht | sync | infrarood.</figcaption>
 </figure>
 
 <h3>Het IoT om je heen: rtl_433</h3>
