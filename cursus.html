@@ -91,6 +91,7 @@ begrijpen.</em></p>
   <a href="#les6">Les 6 · Data-analyse</a>
   <a href="#les7">Les 7 · Wetgeving en ethiek</a>
   <a href="#les8">Les 8 · Eindopdracht</a>
+  <a href="#les9">Les 9 · Bonus — op weg naar het N-examen</a>
 </nav>
 
 <!-- ================================================================ LES 1 -->
@@ -831,6 +832,152 @@ Foto: mr_t_77, CC BY-SA 2.0.</figcaption>
 Bronnen: <a href="https://pysdr.org">pysdr.org</a> · <a href="https://www.rtl-sdr.com">rtl-sdr.com</a> ·
 <a href="https://www.sigidwiki.com">sigidwiki.com</a> · r/RTLSDR · VERON.</p>
 
+<!-- ================================================================ LES 9 -->
+<section class="chapter" id="les9" style="--c1:#33691e">
+  <div class="chicon">🎓</div>
+  <div class="chnum">Les 9 · Bonus</div>
+  <h2>Op weg naar het N-examen</h2>
+  <p class="chsub">Van luisteraar naar zender</p>
+  <div class="lesmeta">⏱ 60 min + oefenexamens · 🎒 rekenmachine mag mee</div>
+  <p class="chgoal">🎯 Na deze les ken je de examenstof die déze cursus nog niet behandelde:
+  Ohm, superheterodyne, SSB, SWR, propagatie, EMC en de voorschriften — en weet je hoe je
+  gaat oefenen.</p>
+  <p class="chdown">⌄</p>
+</section>
+
+<p>Alles tot nu toe ging over <em>ontvangen</em> — daar heb je geen vergunning voor nodig.
+Maar wie de smaak te pakken heeft, wil vroeg of laat zelf de ether in. Daarvoor bestaat in
+Nederland de <b>N-registratie</b> (Novice): een meerkeuze-examen over radiotechniek en
+voorschriften, sinds juli 2023 afgenomen door het <b>CBR</b>. Het goede nieuws: ongeveer de
+helft van de stof heb je in les&nbsp;1–7 al gehad (golven, modulatie, dB, antennebasics,
+regelgeving). Deze bonusles behandelt de rest.</p>
+
+<h3>Elektriciteit: de wet van Ohm en vermogen</h3>
+<p>De kern van het technische deel is het rekendriehoekje van Ohm plus de vermogensformule.
+Spanning (U, volt) duwt stroom (I, ampère) door een weerstand (R, ohm), en het verstookte
+vermogen (P, watt) volgt daaruit:</p>
+<div class="key">🔑 <b>U = I × R</b> &nbsp;en&nbsp; <b>P = U × I</b> — en dus ook
+P = I²R en P = U²/R. Kun je er één, dan kun je ze allemaal: gewoon omschrijven.</div>
+<p>Voor serie- en parallelschakelingen geldt: weerstanden <b>in serie tel je op</b>
+(R = R1 + R2), <b>parallel</b> wordt de totale weerstand kleiner dan de kleinste
+(voor twee: R = R1·R2/(R1+R2); twee gelijke weerstanden parallel = de helft). Probeer het
+gevoel te krijgen met de rekenaar:</p>
+<div class="demo">
+  <div class="dbar">
+    <label>spanning U</label><input type="range" id="cOhmU" min="1" max="100" value="12">
+    <span class="dval" id="cOhmUv">12 V</span>
+    <label>weerstand R</label><input type="range" id="cOhmR" min="1" max="500" value="50">
+    <span class="dval" id="cOhmRv">50 Ω</span>
+  </div>
+  <p class="dcap" id="cOhmOut" style="font-size:1em;color:#ffd54f"></p>
+  <p class="dcap">🎛️ Ohm-rekenaar: I = U/R en P = U·I, live. Examenvraag-niveau: "een 50 Ω dummy load aan 12 V — hoeveel vermogen?"</p>
+</div>
+
+<h3>De superheterodyne-ontvanger (en zijn spiegel)</h3>
+<p>Het blokschema uit les&nbsp;2 — filter, mixer, middenfrequentversterker, demodulator —
+heet voluit de <b>superheterodyne</b>, en het examen wil dat je hem begrijpt. De truc: je
+mengt het ontvangen signaal met een lokale oscillator (LO), waardoor een vast
+<b>middenfrequent</b> (MF) ontstaat: MF = |f<sub>signaal</sub> − f<sub>LO</sub>|. Eén
+vaste MF-versterker kan zo élke frequentie verwerken. De adder onder het gras: een signaal
+aan de <em>andere</em> kant van de LO levert precies dezelfde MF op — de
+<b>spiegelfrequentie</b> (f<sub>spiegel</sub> = f<sub>LO</sub> + MF als je signaal eronder
+zit). Daarom zit er vóór de mixer altijd een filter. Herken je de examenvraag: LO op
+14,7&nbsp;MHz, MF 455&nbsp;kHz, signaal 14,245&nbsp;MHz → spiegel op 15,155&nbsp;MHz.</p>
+
+<h3>SSB en bandbreedtes</h3>
+<p>AM verspilt: de draaggolf bevat geen informatie en de twee zijbanden zijn elkaars kopie.
+<b>SSB</b> (enkelzijband) stuurt alleen één zijband — drie keer efficiënter, en dé
+spraakmodus op de amateurbanden (onder de 10&nbsp;MHz traditioneel LSB, erboven USB). De
+prijs: zonder draaggolf moet je ontvanger exact afstemmen, anders klinkt alles als Donald
+Duck — precies wat je in lab&nbsp;1 hoorde. Bandbreedtes die je moet kennen:</p>
+<table>
+  <tr><th>Modus</th><th>Bandbreedte (orde)</th><th>Gebruik</th></tr>
+  <tr><td>CW (morse)</td><td>~500 Hz</td><td>komt door waar niets anders doorkomt</td></tr>
+  <tr><td>SSB</td><td>~2,7 kHz</td><td>spraak op HF</td></tr>
+  <tr><td>AM</td><td>~6 kHz</td><td>luchtvaart, middengolf</td></tr>
+  <tr><td>FM-smal</td><td>~12 kHz</td><td>repeaters, portofoons</td></tr>
+  <tr><td>FM-breed</td><td>~200 kHz</td><td>FM-omroep</td></tr>
+</table>
+
+<h3>Antennes, voedingslijn en SWR</h3>
+<p>Uit les&nbsp;3 ken je λ/4 en λ/2; het examen voegt er getallen aan toe. Een
+halvegolf-dipool is in de praktijk iets korter dan de theoretische helft (draad "vertraagt"
+de golf ~5%): totale lengte ≈ <b>143 / f(MHz) meter</b>. Een dipool heeft in het midden
+~73&nbsp;Ω impedantie — mooi passend bij 50/75&nbsp;Ω coax. Past de antenne-impedantie
+níet bij de lijn, dan wordt een deel van het vermogen teruggekaatst; de
+<b>staandegolfverhouding (SWR)</b> meet dat. SWR 1:1 is perfect, tot 1:2 prima, daarboven
+ga je afstemmen. En vóór je ooit zendt: eerst in een <b>dummy load</b> (kunstantenne) —
+een 50&nbsp;Ω weerstand die alles netjes in warmte omzet.</p>
+
+<h3>Propagatie: waarom 's nachts de wereld opengaat</h3>
+<p>In les&nbsp;1 zei we al dat kortegolf "tegen de ionosfeer kaatst"; het examen wil de
+verdieping. De zon ioniseert lagen in de hoge atmosfeer: overdag absorbeert de laaggelegen
+<b>D-laag</b> de lage HF-frequenties (daarom is 80&nbsp;m overdag doods), terwijl de hoge
+<b>F-laag</b> frequenties tot de <b>MUF</b> (maximaal bruikbare frequentie) terugbuigt naar
+de aarde. 's Nachts verdwijnt de D-laag en gaan de lage banden open. Tussen het bereik van
+de grondgolf en het punt waar de ruimtegolf neerkomt ligt de <b>dode zone</b> (skip): een
+station op 500&nbsp;km kan onhoorbaar zijn terwijl je 2000&nbsp;km moeiteloos werkt. Op
+VHF/UHF geldt normaal zichtlijn, met af en toe cadeautjes: <b>sporadische E</b> (plotse
+zomerse reflecties op 50/144&nbsp;MHz) en <b>tropo</b> (buigen over temperatuurinversies,
+honderden kilometers extra).</p>
+
+<h3>Storing, EMC en veiligheid</h3>
+<p>Een zender produceert naast de gewenste frequentie altijd zwakkere veelvouden:
+<b>harmonischen</b> (zend je op 145&nbsp;MHz, dan zit de tweede harmonische op
+290&nbsp;MHz). Een <b>laagdoorlaatfilter</b> achter de zender dempt ze. Stoort je signaal
+toch de buren (instraling in audio-apparatuur), dan ben jíj als vergunninghouder
+verantwoordelijk voor het meedenken over de oplossing — ferrietkernen doen wonderen.
+Veiligheid ten slotte: antennes en bliksem horen bij elkaar (aarding!), zendvermogen op een
+antenne die je kunt aanraken is een verbrandingsrisico, en aan een voeding met geladen
+elco's meet je pas na ontladen.</p>
+
+<h3>Voorschriften: wat de N-registratie je geeft</h3>
+<p>Geslaagd? Dan registreer je je bij de RDI en kies je roepletters — als Novice krijg je
+een <b>PD</b>-prefix (bijv. PD1ABC), waarmee je je bij elke uitzending identificeert. De
+belangrijkste Novice-banden (altijd max. <b>25 watt</b>; controleer de actuele regeling op
+rdi.nl — dit overzicht is indicatief):</p>
+<table>
+  <tr><th>Band</th><th>Frequenties</th><th>Leuk voor</th></tr>
+  <tr><td>10 m</td><td>28,0 – 29,7 MHz</td><td>wereldwijde DX als de zon meewerkt</td></tr>
+  <tr><td>6 m</td><td>50,45 – 52,0 MHz</td><td>sporadische E in de zomer</td></tr>
+  <tr><td>4 m</td><td>70,0 – 70,5 MHz</td><td>rustige experimenteerband</td></tr>
+  <tr><td>2 m</td><td>144 – 146 MHz</td><td>lokaal, repeaters, ISS, satellieten</td></tr>
+  <tr><td>70 cm</td><td>430 – 440 MHz</td><td>repeaters, satellieten, ATV</td></tr>
+  <tr><td>23 cm</td><td>1240 – 1300 MHz</td><td>ATV, experimenten</td></tr>
+</table>
+
+<p>En dan de radiotaal zelf. De <b>Q-codes</b> die je moet kennen:</p>
+<table>
+  <tr><td><b>QRM</b> storing (van zenders)</td><td><b>QRN</b> atmosferische storing</td><td><b>QRO</b> vermogen verhogen</td></tr>
+  <tr><td><b>QRP</b> laag vermogen</td><td><b>QRT</b> stoppen met zenden</td><td><b>QRV</b> gereed/stand-by</td></tr>
+  <tr><td><b>QRZ?</b> wie roept mij?</td><td><b>QSB</b> fading</td><td><b>QSL</b> ontvangstbevestiging</td></tr>
+  <tr><td><b>QSO</b> verbinding</td><td><b>QSY</b> van frequentie wisselen</td><td><b>QTH</b> locatie</td></tr>
+</table>
+<p>Rapporten geef je als <b>RST</b>: Readability (1–5), Strength (1–9), Tone (1–9, alleen
+CW) — "je bent 59" is dus: perfect leesbaar, zeer sterk. En gespeld wordt er met het
+NATO-alfabet. Oefen meteen even met je eigen naam:</p>
+<div class="demo">
+  <div class="dbar">
+    <input type="text" id="cSpelT" value="PD1SDR" maxlength="20">
+  </div>
+  <p class="dcap" id="cSpelOut" style="font-size:1em;color:#ffd54f"></p>
+  <p class="dcap">🎛️ Spelalfabet-trainer: typ je (toekomstige) roepnaam en lees hem voor zoals het hoort.</p>
+</div>
+
+<div class="lab">
+<h4>🔬 Lab 9 — Oefenexamen (±45 min)</h4>
+<ol>
+  <li>Maak een gratis oefenexamen N op <a href="https://www.ham-radio.nl">ham-radio.nl</a>
+      of <a href="https://www.iwab.nu">iwab.nu</a>.</li>
+  <li>Scoor je ≥ 80%? Plan dan een echt examen bij het CBR. Lager? Noteer per fout
+      <em>welke</em> les-sectie je moet herlezen.</li>
+  <li>Zoek een cursus of zelfbouwavond bij een VERON/VRZA-afdeling in de buurt — samen
+      stampen werkt beter.</li>
+</ol>
+<p>✅ <b>Klaar als</b> je twee oefenexamens op rij haalt. Daarna: examen boeken, PD-roepnaam
+kiezen, en die 25 watt verantwoord gebruiken. Welkom in de ether! 🎙️</p>
+</div>
+
 <p class="top"><a href="#les1">↑ naar boven</a></p>
 </main>
 
@@ -870,6 +1017,28 @@ function reg(id, factory) {
     else if (raf) { cancelAnimationFrame(raf); raf = null; }
   }), { threshold: 0.05 }).observe(cv);
 }
+
+/* ---- les 9: Ohm-rekenaar ---- */
+function ohmUpdate() {
+  const U = +$('cOhmU').value, R = +$('cOhmR').value;
+  $('cOhmUv').textContent = U + ' V';
+  $('cOhmRv').textContent = R + ' Ω';
+  const I = U / R, P = U * I;
+  $('cOhmOut').textContent = `I = U/R = ${I.toFixed(2)} A   ·   P = U·I = ${P.toFixed(1)} W` +
+    (P > 100 ? '  🔥 (die weerstand wordt heet!)' : '');
+}
+if ($('cOhmU')) { ['cOhmU','cOhmR'].forEach(id => $(id).addEventListener('input', ohmUpdate)); ohmUpdate(); }
+
+/* ---- les 9: spelalfabet-trainer ---- */
+const NATO = {A:'Alfa',B:'Bravo',C:'Charlie',D:'Delta',E:'Echo',F:'Foxtrot',G:'Golf',H:'Hotel',
+  I:'India',J:'Juliett',K:'Kilo',L:'Lima',M:'Mike',N:'November',O:'Oscar',P:'Papa',Q:'Quebec',
+  R:'Romeo',S:'Sierra',T:'Tango',U:'Uniform',V:'Victor',W:'Whiskey',X:'X-ray',Y:'Yankee',Z:'Zulu',
+  '0':'Nul',1:'Een',2:'Twee',3:'Drie',4:'Vier',5:'Vijf',6:'Zes',7:'Zeven',8:'Acht',9:'Negen'};
+function spelUpdate() {
+  const txt = $('cSpelT').value.toUpperCase();
+  $('cSpelOut').textContent = [...txt].map(c => NATO[c] || (c === ' ' ? ' · ' : c)).join(' ');
+}
+if ($('cSpelT')) { $('cSpelT').addEventListener('input', spelUpdate); spelUpdate(); }
 
 /* ---- les 1: golf met frequentie/amplitude ---- */
 reg('cWave', cv => {
