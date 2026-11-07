@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDR-cursus — cursusboek | Rein Velt · Hackerspace Drenthe</title>
+<style>
+  :root { --accent:#4fc3f7; --warn:#ff7043; --ok:#66bb6a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#15181d; color:#d8dde3; font:18px/1.65 Georgia, 'Times New Roman', serif; }
+  header { background:linear-gradient(to bottom,#0d47a1,#15181d); padding:3em 1em 2em; text-align:center; }
+  header h1 { font-size:2.2em; margin:.2em 0; color:#fff; }
+  header p { color:#bcd; }
+  header a { color:#ffd54f; }
+  main { max-width:46em; margin:0 auto; padding:1em 1.2em 4em; }
+  h2 { color:var(--accent); font-size:1.7em; margin-top:2.2em; border-bottom:2px solid #2a3340; padding-bottom:.25em; }
+  h3 { color:#9fd3f0; margin-top:1.6em; }
+  a { color:var(--accent); }
+  img { max-width:100%; border-radius:10px; display:block; margin:1em auto; }
+  figcaption, .credit { font-size:.75em; color:#8a94a0; text-align:center; margin-top:-.6em; margin-bottom:1em; }
+  audio { width:100%; margin:.4em 0 1em; }
+  table { border-collapse:collapse; width:100%; font-size:.85em; margin:1em 0; }
+  th, td { border-bottom:1px solid #2a3340; padding:.45em .6em; text-align:left; vertical-align:top; }
+  th { color:var(--accent); }
+  code { background:#232a33; padding:.1em .35em; border-radius:4px; font-size:.85em; color:#ffcc80; font-family:ui-monospace,Consolas,monospace; }
+  pre { background:#10141a; border:1px solid #2a3340; border-radius:8px; padding:1em; overflow-x:auto; }
+  pre code { background:none; padding:0; color:#cde; font-size:.8em; }
+  .lesmeta { background:#1b2430; border-radius:10px; padding:.7em 1em; font-size:.85em; color:#abc; margin:.8em 0 1.2em; }
+  .key { background:#0d3321; border-left:5px solid var(--ok); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
+  .warn { background:#3a2420; border-left:5px solid var(--warn); padding:.6em 1em; border-radius:6px; margin:1.2em 0; }
+  .lab { background:#122540; border-left:5px solid var(--accent); padding:.8em 1.1em; border-radius:6px; margin:1.6em 0; }
+  .lab h4 { margin:.1em 0 .5em; color:var(--accent); }
+  details { background:#1b2430; border-radius:8px; padding:.6em 1em; margin:.6em 0; }
+  summary { cursor:pointer; color:#ffd54f; }
+  nav.toc { background:#1b2430; border-radius:10px; padding:1em 1.4em; margin:2em 0; }
+  nav.toc a { display:block; padding:.15em 0; text-decoration:none; }
+  .top { font-size:.75em; }
+  footer { text-align:center; color:#8a94a0; font-size:.8em; padding:2em; border-top:1px solid #2a3340; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📻 Software Defined Radio</h1>
+  <p>Een hands-on cursus — van radiogolven naar bits<br><b>Rein Velt</b> · Hackerspace Drenthe</p>
+  <p>📽 <a href="index.html">interactieve slides</a> · 💾 <a href="https://github.com/ReinVelt/SDR-voor-beginners">broncode &amp; materiaal</a></p>
+</header>
+
+<main>
+
+<p><em>Overal om je heen — door je lichaam, door de muren, door je koffiekop — bewegen op dit
+moment duizenden radiosignalen. Vliegtuigen melden hun positie, weersatellieten sturen foto's
+naar de aarde, het weerstation van je buren roept elke dertig seconden zijn temperatuur de
+ether in, en ergens in Rusland zoemt al veertig jaar een mysterieuze zender. Je had er tot nu
+toe geen idee van, want je mist het zintuig ervoor. Deze cursus geeft je dat zintuig: voor
+35 euro en een beetje software leer je de onzichtbare wereld van radio zien, horen en
+begrijpen.</em></p>
+
+<nav class="toc">
+  <b>Inhoud</b>
+  <a href="#les1">Les 1 · Radio basics — de onzichtbare zee</a>
+  <a href="#les2">Les 2 · Wat is Software Defined Radio?</a>
+  <a href="#les3">Les 3 · Hardware — dongles en antennes</a>
+  <a href="#les4">Les 4 · Tools — van FFT tot GNU Radio</a>
+  <a href="#les5">Les 5 · Signalen decoderen</a>
+  <a href="#les6">Les 6 · Data-analyse</a>
+  <a href="#les7">Les 7 · Wetgeving en ethiek</a>
+  <a href="#les8">Les 8 · Eindopdracht</a>
+</nav>
+
+<!-- ================================================================ LES 1 -->
+<h2 id="les1">Les 1 · Radio basics — de onzichtbare zee</h2>
+<div class="lesmeta">⏱ 25 minuten lezen + 15 minuten lab · 🎒 alleen een browser nodig ·
+🎯 na deze les begrijp je golven, spectrum, modulatie en decibel, en heb je je eerste signalen beluisterd</div>
+
+<h3>Radio is licht (maar dan trager)</h3>
+<p>Radiogolven zijn hetzelfde natuurkundige verschijnsel als licht: elektromagnetische golven.
+Het enige verschil is de frequentie — het aantal trillingen per seconde. Zichtbaar licht trilt
+honderden biljoenen keren per seconde; de FM-zender waar je 's ochtends naar luistert doet het
+"slechts" honderd miljoen keer (100&nbsp;MHz). Omdat radio en licht familie zijn, gedragen
+radiogolven zich ook als licht: ze reizen met de lichtsnelheid, kunnen worden gereflecteerd,
+gebogen en geabsorbeerd.</p>
+
+<p>Een golf heeft drie eigenschappen die je kunt variëren, en dat is belangrijk, want álle
+radiocommunicatie komt neer op het slim variëren van precies deze drie dingen:</p>
+<ul>
+  <li><b>Amplitude</b> — hoe sterk de golf is (vergelijk: hoe hard het geluid staat);</li>
+  <li><b>Frequentie</b> — hoe snel hij trilt (vergelijk: de toonhoogte);</li>
+  <li><b>Fase</b> — waar in zijn cyclus de golf zich bevindt.</li>
+</ul>
+
+<p>Frequentie en golflengte zijn twee kanten van dezelfde medaille: hoe sneller de golf trilt,
+hoe korter elke golf is. De handigste formule van deze hele cursus is daarom:</p>
+<div class="key">🔑 <b>golflengte in meters ≈ 300 / frequentie in MHz</b>. Een FM-zender op
+100&nbsp;MHz heeft golven van 3 meter; ADS-B op 1090&nbsp;MHz zit op 27 centimeter. Je zult
+deze formule telkens weer gebruiken, vooral bij het kiezen van antennes.</div>
+
+<h3>Radio ≈ geluid</h3>
+<p>Bijna alles wat je intuïtief van geluid begrijpt, vertaalt één-op-één naar radio. Toonhoogte
+wordt frequentie. Volume wordt signaalsterkte. Een orkest waarin alle instrumenten tegelijk
+spelen is precies wat het radiospectrum is: duizenden zenders tegelijk in de lucht, elk op hun
+eigen "toonhoogte". En net zoals jouw oor moeiteloos één stem uit een vol café filtert, filtert
+een radio-ontvanger één zender uit die kakofonie. Houd dit beeld vast: <em>een SDR is een
+microfoon voor radiogolven, plus software die je oor nadoet</em>.</p>
+
+<h3>Het spectrum: wie woont waar</h3>
+<p>Omdat iedereen tegelijk zendt, zijn er afspraken over wie welke frequenties gebruikt — een
+soort bestemmingsplan voor de ether. Grofweg geldt: <b>lage frequenties reizen ver</b> (ze
+buigen om obstakels heen en kaatsen zelfs tegen de ionosfeer, waardoor je 's nachts op de
+middengolf heel Europa hoort), terwijl <b>hoge frequenties meer informatie kunnen dragen</b>
+maar zichtlijn nodig hebben.</p>
+<table>
+  <tr><th>Band</th><th>Frequentie</th><th>Typische bewoners</th></tr>
+  <tr><td>LF/MF</td><td>30 kHz – 3 MHz</td><td>tijdseinzenders (DCF77), AM-omroep</td></tr>
+  <tr><td>HF (kortegolf)</td><td>3 – 30 MHz</td><td>wereldwijde omroep, zendamateurs, scheepvaart</td></tr>
+  <tr><td>VHF</td><td>30 – 300 MHz</td><td>FM-omroep, luchtvaart, weersatellieten, marifoon</td></tr>
+  <tr><td>UHF</td><td>300 MHz – 3 GHz</td><td>sensoren, portofoons, ADS-B, GPS, wifi</td></tr>
+  <tr><td>SHF</td><td>3 – 30 GHz</td><td>satelliet-tv, radar, 5G</td></tr>
+</table>
+
+<h3>Modulatie: informatie op een golf zetten</h3>
+<p>Een kale draaggolf vertelt niets — het is een constante fluittoon. Om informatie te
+versturen moet je de golf <em>moduleren</em>: één van de drie eigenschappen laten meebewegen
+met je boodschap. Bij <b>AM</b> (amplitudemodulatie) varieert de sterkte van de draaggolf met
+het geluid; simpel en robuust, daarom gebruikt de luchtvaart het nog steeds. Bij <b>FM</b>
+varieert de frequentie; dat is ongevoeliger voor storing en klinkt daarom beter voor muziek.
+Digitale signalen ten slotte laten de golf in sprongetjes verspringen — tussen twee frequenties
+(FSK), fasen (PSK) of combinaties van fase en amplitude (QAM). Elke sprong codeert één of meer
+bits. In de <a href="index.html#/7">interactieve slides</a> zie je alle drie live bewegen.</p>
+
+<h3>Decibel: de taal van signaalsterkte</h3>
+<p>Radiosignalen verschillen onvoorstelbaar veel in sterkte. Je wifi-router zendt met zo'n
+100&nbsp;milliwatt; het GPS-signaal dat je telefoon ontvangt is een tienbiljoenste daarvan.
+Zulke verhoudingen schrijf je niet met nullen, maar logaritmisch, in <b>decibel</b>:
++3&nbsp;dB betekent twee keer zo veel vermogen, +10&nbsp;dB tien keer zo veel. Het getal dat
+er echt toe doet is de <b>signaal-ruisverhouding (SNR)</b>: hoe ver je signaal boven de
+altijd aanwezige ruisvloer uitsteekt. Niet de absolute sterkte, maar de SNR bepaalt of je iets
+kunt decoderen — FM-audio is al verstaanbaar bij zo'n 5&nbsp;dB, een schoon satellietbeeld
+vraagt 20&nbsp;dB. Probeer het zelf in de <a href="index.html#/9">SNR-speeltuin</a>.</p>
+
+<div class="lab">
+<h4>🔬 Lab 1 — Luisteren zonder hardware (±15 min)</h4>
+<p>Je hebt nog geen SDR nodig: de Universiteit Twente heeft een ontvanger die je via de
+browser bedient, met heel West-Europa als antennebereik:
+<a href="http://websdr.ewi.utwente.nl:8901/">websdr.ewi.utwente.nl:8901</a>.</p>
+<ol>
+  <li>Tune naar <b>198 kHz</b>, modus AM: BBC Radio 4 op de lange golf.</li>
+  <li>Zoek tussen <b>3.6 en 3.8 MHz</b> een Nederlands amateurgesprek — zet de modus op LSB
+      en hoor hoe "Donald Duck" langzaam verstaanbaar wordt als je precies afstemt.</li>
+  <li>Vind rond <b>14.0–14.1 MHz</b> een morsesignaal (modus CW).</li>
+  <li>Let bij elk signaal op de waterfall: hoe feller de kleur boven de blauwe achtergrond,
+      hoe hoger de SNR.</li>
+</ol>
+<p>✅ <b>Klaar als</b> je drie modulaties hebt gehoord — AM, SSB en CW — en het verschil kunt
+beschrijven. <em>Bonus: tune naar 4625 kHz. Hoor jij The Buzzer?</em> 👻</p>
+</div>
+
+<details><summary>✋ Zelftoets les 1</summary>
+<p>1. De NOAA-weersatelliet zendt op 137 MHz. Hoe lang is één golf? <b>300/137 ≈ 2,2 m</b> —
+een kwartgolf-antennepoot wordt dus ~55 cm.<br>
+2. Wat betekent +20 dB? <b>Honderd keer zo veel vermogen</b> (10 × 10).<br>
+3. Waarom gebruikt de luchtvaart nog AM? <b>Simpel, robuust, en twee gelijktijdige zenders
+"botsen" hoorbaar in plaats van elkaar onhoorbaar te maken.</b></p>
+</details>
+
+<!-- ================================================================ LES 2 -->
+<h2 id="les2">Les 2 · Wat is Software Defined Radio?</h2>
+<div class="lesmeta">⏱ 25 min + 10 min lab · 🎒 browser, Python voor de bonus ·
+🎯 na deze les begrijp je het SDR-principe, IQ-sampling en Nyquist — en kun je aliasing voorspellen</div>
+
+<h3>Van soldeerbout naar software</h3>
+<p>Een klassieke radio is een keten van gespecialiseerde hardware: een filter pikt de band
+eruit, een mixer verschuift de frequentie, nog een filter, dan een demodulator die precies
+voor één soort modulatie is gebouwd, en ten slotte een versterker. Wil je een ander soort
+signaal ontvangen? Dan bouw je een ander apparaat. Honderd jaar lang was radio dus vooral een
+hardwarehobby.</p>
+
+<p>Software Defined Radio draait dat principe om: <b>digitaliseer het antennesignaal zo vroeg
+mogelijk, en doe al het andere in software</b>. De hardware wordt minimaal — een versterker,
+een tuner en een analoog-digitaalomzetter (ADC) — en alles wat daarna komt is code: filteren,
+demoduleren, decoderen, analyseren. Eén apparaat wordt duizend radio's. Een nieuw protocol
+ontvangen betekent niet solderen, maar software updaten. Dat is de revolutie die radio-onderzoek
+democratiseerde: wat vroeger een lab met een spectrumanalyzer van tienduizend euro vereiste,
+doet nu een hobbyist met een dongle van 35 euro.</p>
+
+<h3>IQ-samples: de ruwe grondstof</h3>
+<p>Hier wordt het heel even wiskundig, maar het beeld is simpel. Een SDR meet het signaal niet
+één keer, maar twee keer tegelijk: één meting direct (<b>I</b>, in-phase) en één meting een
+kwartslag verschoven (<b>Q</b>, quadrature). Samen vormen I en Q een punt in een plat vlak —
+een draaiend wijzertje, als je wilt. De lengte van het wijzertje is de amplitude van het
+signaal, de hoek is de fase, en de draaisnelheid is de frequentie. Doordat je met IQ-samples
+amplitude én fase kent, kun je <em>elke denkbare modulatie</em> achteraf in software
+demoduleren. Kijk naar de <a href="index.html#/14">draaiende fasor in de slides</a> om dit te
+zien gebeuren.</p>
+<div class="key">🔑 Te onthouden: IQ-samples zijn de ruwe grondstof van alles wat volgt.
+De waterfall, het audiosignaal, de gedecodeerde vliegtuigposities — alles wordt eruit berekend.</div>
+
+<h3>Nyquist, samplerate en spoken</h3>
+<p>Hoe vaak moet je meten? Het beroemde theorema van Nyquist zegt: minstens twee keer zo snel
+als de hoogste frequentie die je wilt vastleggen. Meet je te langzaam, dan gebeurt er iets
+verraderlijks: het signaal "vouwt terug" en verschijnt als <em>spook-signaal</em> op een
+verkeerde frequentie — aliasing. Dat is geen theoretisch randgeval; het is de reden dat elke
+SDR filters heeft en dat wagenwielen in oude westerns achteruit lijken te draaien (een camera
+sampled immers ook).</p>
+<p>Voor SDR's met IQ-samples geldt een prettige vuistregel: <b>de samplerate is de breedte
+van het spectrum dat je tegelijk ziet</b>. Een RTL-SDR op 2,4&nbsp;MS/s laat 2,4&nbsp;MHz
+spectrum zien. Daar hangt wel een prijskaartje aan: 2,4 miljoen samples van 2 bytes per
+seconde is bijna 5&nbsp;MB per seconde — een uurtje "even alles opnemen" kost 17&nbsp;GB.
+Opnemen doe je dus kort en gericht.</p>
+
+<div class="lab">
+<h4>🔬 Lab 2 — Voorspel het spook (±10 min)</h4>
+<p>Open de <a href="index.html#/19">aliasing-demo</a> in de slides.</p>
+<ol>
+  <li>Het signaal heeft 10 cycli. Zet de slider op <b>18 samples</b> — maar voorspel éérst op
+      papier waar het spook verschijnt (hint: f − fs = 10 − 18 → gevouwen: 8).</li>
+  <li>Herhaal voor 16 en 24 samples. Wanneer klopt je formule direct, wanneer vouwt hij?</li>
+  <li>Python-bonus: sample een toon van 440 Hz op 600 Hz en <em>hoor</em> het alias:
+<pre><code>import numpy as np, sounddevice as sd
+t = np.arange(0, 2, 1/600)            # fs = 600 Hz
+sd.play(np.sin(2*np.pi*440*t), 600)   # hoor je 160 Hz?</code></pre></li>
+</ol>
+<p>✅ <b>Klaar als</b> je de spookfrequentie twee keer goed voorspelt vóór je de slider beweegt.</p>
+</div>
+
+<details><summary>✋ Zelftoets les 2</summary>
+<p>1. RTL-SDR afgestemd op 100 MHz met 2,4 MS/s — welk spectrum zie je? <b>98,8–101,2 MHz.</b><br>
+2. Verschijnt een zender op 101,5 MHz in beeld? <b>Nee — buiten de band; hertunen.</b><br>
+3. Waarom kun je met IQ-samples elke modulatie demoduleren? <b>Omdat je amplitude én fase van
+het signaal kent — meer informatie bestaat er niet.</b></p>
+</details>
+
+<!-- ================================================================ LES 3 -->
+<h2 id="les3">Les 3 · Hardware — dongles en antennes</h2>
+<div class="lesmeta">⏱ 20 min + 20 min lab · 🎒 RTL-SDR dongle (~€35, optioneel) ·
+🎯 na deze les kies je de juiste SDR en antenne, en ontvangt je dongle zijn eerste signaal</div>
+
+<h3>De gelukkigste vergissing van de radiogeschiedenis</h3>
+<p>In 2012 ontdekten hackers iets moois: een goedkope USB-stick voor digitale tv (DVB-T),
+gebouwd rond de Realtek RTL2832U-chip, kon in een verborgen modus zijn ruwe IQ-samples
+rechtstreeks naar de computer sturen. Een tv-stick van vijftien euro bleek een volwaardige
+software defined radio. Die vondst — de "RTL-SDR hack" — veroorzaakte een explosie van
+hobbyprojecten en is de reden dat deze cursus bestaat.</p>
+
+<figure>
+<img src="assets/rtlsdr_photo.jpg" alt="RTL-SDR dongle">
+<figcaption>De RTL-SDR Blog V3: van tv-stick tot meetinstrument. Foto: Joeceads, CC BY-SA 4.0.</figcaption>
+</figure>
+
+<p>Moderne versies zoals de <b>RTL-SDR Blog V3/V4</b> zijn speciaal voor hobbyisten
+doorontwikkeld: een stabiele temperatuurgecompenseerde klok (TCXO), een aluminium behuizing
+tegen stoorsignalen, een bias-tee om een antenneversterker te voeden, en "direct sampling"
+waarmee je ook de kortegolf onder 24&nbsp;MHz kunt ontvangen. Bereik: 500&nbsp;kHz tot
+1,7&nbsp;GHz, alléén ontvangen. Koop een origineel exemplaar via rtl-sdr.com — kloons drijven
+qua frequentie weg zodra ze warm worden.</p>
+
+<h3>Als je ook wilt zenden</h3>
+<p>De <b>HackRF One</b> (±€300, open hardware) ontvangt van 1&nbsp;MHz tot 6&nbsp;GHz en kan
+ook <em>zenden</em>. Dat opent deuren — eigen protocollen testen, satellieten aanroepen met een
+amateurlicentie — maar schept ook verantwoordelijkheid.</p>
+<div class="warn">⚠️ Zenden zonder vergunning is in Nederland illegaal, ook heel kort en op laag
+vermogen. Een HackRF die "even test" op een GPS- of luchtvaartfrequentie kan letterlijk levens
+in gevaar brengen. Experimenteer met een dummy load of een kabeltje — nooit met een antenne.
+Meer hierover in les 7.</div>
+<p>Tussen dongle en HackRF zitten nog de <b>Airspy</b> en <b>SDRplay</b> (betere ontvangers,
+12–14 bit) en de <b>PlutoSDR</b> (zenden én ontvangen tegelijk, met FPGA). Begin niettemin
+gewoon met een RTL-SDR: negentig procent van wat je in deze cursus leert heeft aan die dongle
+genoeg.</p>
+
+<h3>De antenne is de helft van je succes</h3>
+<p>Beginners geven hun geld aan een betere SDR; gevorderden aan een betere antenne. Een matige
+antenne met een topontvanger verliest het áltijd van een goede antenne met een goedkope
+ontvanger. De vuistregel: een antenne werkt het best als zijn lengte past bij de golflengte —
+meestal een kwart of een halve golf (daar is de formule uit les 1 weer). En verder: buiten is
+beter dan binnen, hoog is beter dan laag, en een korte goede kabel verslaat een lange slechte.</p>
+
+<figure>
+<img src="assets/qfh_antenna.jpg" alt="Zelfgebouwde QFH-antenne" style="max-width:55%">
+<figcaption>Een zelfgebouwde QFH-antenne voor 137 MHz weersatellieten — koperleiding en
+pvc-buis. Foto: Karsten Lehmann, CC BY-SA 4.0.</figcaption>
+</figure>
+
+<table>
+  <tr><th>Antenne</th><th>Goed voor</th><th>Opmerking</th></tr>
+  <tr><td>Telescoop-dipool</td><td>alles (breedband)</td><td>zit bij de RTL-SDR-kit; uitschuiven op lengte</td></tr>
+  <tr><td>Discone</td><td>scannen 25 MHz–1,3 GHz</td><td>breedband, geen versterking</td></tr>
+  <tr><td>Colineair</td><td>ADS-B 1090 MHz</td><td>klein, veel versterking op één band</td></tr>
+  <tr><td>V-dipool / QFH</td><td>weersatellieten 137 MHz</td><td>omhoog gericht; QFH vangt de ronddraaiende polarisatie</td></tr>
+  <tr><td>Longwire / mini-whip</td><td>kortegolf</td><td>een lang stuk draad buiten doet wonderen</td></tr>
+</table>
+
+<div class="lab">
+<h4>🔬 Lab 3 — Dongle aan de praat (±20 min)</h4>
+<ol>
+  <li>Installeer <b>SDR++</b>. Windows: vervang de USB-driver met <b>Zadig</b>.
+      Linux: <code>sudo apt install rtl-sdr</code>.</li>
+  <li>Test de dongle: <code>rtl_test -t</code> — geen "lost samples"? Dan ben je goed.</li>
+  <li>Tune naar je sterkste lokale FM-zender. Geluid? Gefeliciteerd — je eerste eigen ontvangst! 🎉</li>
+  <li>Het antenne-experiment: noteer de signaalsterkte midden in de kamer en daarna bij het
+      raam. Het verschil (meestal 6–15 dB — onthoud: 10 dB is tien keer zo veel vermogen!)
+      is je eerste les in antenneplaatsing.</li>
+</ol>
+<p>✅ <b>Klaar als</b> FM speelt en je het raam-effect in dB kunt benoemen. Geen dongle? Doe het
+lab via een WebSDR.</p>
+</div>
+
+<!-- ================================================================ LES 4 -->
+<h2 id="les4">Les 4 · Tools — van FFT tot GNU Radio</h2>
+<div class="lesmeta">⏱ 30 min + 25 min lab · 🎒 RTL-SDR + SDR++, GNU Radio ·
+🎯 na deze les lees je een waterfall als een boek en bouw je je eerste flowgraph</div>
+
+<h3>Eerst even: wat doet een FFT?</h3>
+<p>Je SDR levert alleen maar samples in de tijd — een eindeloze rij getallen. Daar ziet een
+mens niets in. De <b>Fast Fourier Transform</b> is het gereedschap dat die rij omzet naar iets
+begrijpelijks: hij werkt als een prisma dat wit licht in kleuren splitst, maar dan voor
+geluid en radio — hij splitst het signaal in de frequenties waaruit het bestaat. Eén FFT is
+één momentopname van het spectrum. Plak duizenden van die momentopnames onder elkaar en je
+krijgt de <b>waterfall</b>: frequentie horizontaal, tijd verticaal, signaalsterkte als kleur.
+Je oor doet trouwens precies hetzelfde: trillingen in, tonen eruit. Speel met de
+<a href="index.html#/23">live FFT-demo</a> om het gevoel te krijgen.</p>
+
+<h3>De waterfall lezen</h3>
+<p>De waterfall is je belangrijkste venster op de ether, en na een paar avonden herken je
+signalen op het oog, nog vóór je ze hoort. Een smalle rechte streep: een FM-draaggolf van een
+portofoon of baken. Een brede wollige band: FM-omroep met muziek. Korte felle blokjes die
+komen en gaan: pager-bursts of sensoren. Stippen die over de band springen: een frequency
+hopper. Hieronder een echte opname — gemaakt met precies dezelfde FFT-bewerking die SDR++
+gebruikt:</p>
+<figure>
+<img src="assets/waterfall_real.png" alt="Waterfall van een 2,4 MHz opname">
+<img src="assets/spectrum_real.png" alt="Spectrum van dezelfde opname">
+<figcaption>Boven: waterfall van 0,6 s IQ-opname. Onder: het gemiddelde spectrum — de pieken
+zijn de signalen die in de waterfall als strepen verschijnen.</figcaption>
+</figure>
+
+<p>En zo klinken ze. Elke modulatie heeft naast een vingerafdruk ook een eigen <em>geluid</em>
+(alle fragmenten hieronder zijn met NumPy gesynthetiseerd):</p>
+<p>📡 Morse — "CQ CQ DE PA0SDR K":</p>
+<audio controls preload="none" src="assets/morse.wav"></audio>
+<p>📟 POCSAG pager-bursts (let op de ratelende preamble):</p>
+<audio controls preload="none" src="assets/pocsag.wav"></audio>
+<p>🛰️ NOAA-weersatelliet — het beroemde "tik-tok":</p>
+<audio controls preload="none" src="assets/apt.wav"></audio>
+<p>📻 Over een FM-zender heen draaien:</p>
+<audio controls preload="none" src="assets/fm_tuning.wav"></audio>
+
+<p>Wil je dit zelf ervaren zonder dongle? In de slides zit een
+<a href="index.html#/33">speelbare tuner</a>: sleep over de band, vind de morse-baken, de
+muziekzender en de pager — met echte detuning-effecten.</p>
+
+<h3>Het tool-landschap</h3>
+<p>Voor elke taak bestaat een gratis opensource-tool. Luisteren en verkennen doe je met
+<b>SDR++</b> (alle platforms) of <b>GQRX</b>. Voor specifieke signalen zijn er specialisten:
+<b>dump1090</b> voor vliegtuigen, <b>rtl_433</b> voor sensoren, <b>SatDump</b> voor
+weersatellieten, <b>multimon-ng</b> voor pagers. Voor onbekende signalen pak je
+<b>Universal Radio Hacker</b> of <b>inspectrum</b>. En als je zelf wilt bouwen is er
+<b>GNU Radio</b>.</p>
+
+<h3>GNU Radio: radio als blokkendoos</h3>
+<p>GNU Radio is een grafische bouwdoos voor signaalverwerking: je sleept blokken op een canvas
+— bron, filter, demodulator, luidspreker — en verbindt ze met lijnen tot een <em>flowgraph</em>.
+Elk blok bewerkt de stroom samples en geeft hem door. Een complete FM-radio is vijf blokken.
+Het mooie: GNU Radio Companion genereert er gewoon Python-code van, dus alles wat je klikt
+kun je ook scripten:</p>
+<pre><code>from gnuradio import gr, analog, filter, audio
+import osmosdr
+
+class FMRadio(gr.top_block):
+    def __init__(self, freq=100.7e6):
+        gr.top_block.__init__(self)
+        src = osmosdr.source()               # RTL-SDR bron
+        src.set_sample_rate(2.4e6)
+        src.set_center_freq(freq)
+        lpf = filter.fir_filter_ccf(10,      # 2.4M -> 240k
+              filter.firdes.low_pass(1, 2.4e6, 100e3, 10e3))
+        demod = analog.wfm_rcv(quad_rate=240e3, audio_decimation=5)
+        self.connect(src, lpf, demod, audio.sink(48000))
+
+FMRadio().run()</code></pre>
+
+<div class="lab">
+<h4>🔬 Lab 4 — Waterfall-safari + flowgraph (±25 min)</h4>
+<ol>
+  <li>Scan met SDR++ de band <b>430–440 MHz</b> en maak screenshots van drie verschillende
+      signaalvormen in de waterfall.</li>
+  <li>Zoek je vondsten op bij <a href="https://www.sigidwiki.com">sigidwiki.com</a> — wat
+      denk je dat ze zijn?</li>
+  <li>Bouw in GNU Radio Companion de FM-ontvanger van hierboven na en laat hem spélen.</li>
+</ol>
+<p>✅ <b>Klaar als</b> je flowgraph geluid geeft en je twee van de drie signalen hebt
+geïdentificeerd.</p>
+</div>
+
+<!-- ================================================================ LES 5 -->
+<h2 id="les5">Les 5 · Signalen decoderen</h2>
+<div class="lesmeta">⏱ 40 min + 30 min lab · 🎒 RTL-SDR + dump1090 / rtl_433 / multimon-ng ·
+🎯 na deze les heb je minstens één écht digitaal signaal gedecodeerd</div>
+
+<h3>Vliegtuigen volgen: ADS-B</h3>
+<p>Elk verkeersvliegtuig roept twee keer per seconde zijn positie, hoogte, snelheid en
+roepnaam om, op 1090&nbsp;MHz, onversleuteld. Dit systeem heet ADS-B en het is het perfecte
+eerste decodeerproject: de signalen zijn sterk, de software (<code>dump1090</code>) is één
+commando, en het resultaat — een live kaart met tientallen vliegtuigen die <em>jouw</em>
+antenne hoort — is onweerstaanbaar. Met een dakantenne haal je 200 tot 400 kilometer, want op
+1090&nbsp;MHz geldt: zichtlijn. Websites als Flightradar24 zijn in feite duizenden van zulke
+hobby-ontvangers aan elkaar geknoopt; lever jij data, dan krijg je er een gratis
+premium-account voor terug.</p>
+
+<h3>Pagers leven nog: POCSAG en P2000</h3>
+<p>Het piepersysteem uit de jaren tachtig is springlevend: ziekenhuizen en hulpdiensten
+vertrouwen er nog dagelijks op, juist omdat het zo simpel en robuust is. In Nederland zendt
+<b>P2000</b> op 169,65&nbsp;MHz alle alarmeringen van brandweer en ambulance uit — met
+<code>rtl_fm</code> en <code>multimon-ng</code> decodeer je ze in één pijplijn. Besef wel:
+deze berichten bevatten soms persoonsgegevens. Meelezen voor eigen studie is gedoogd;
+publiceren is dat niet (les 7).</p>
+
+<h3>Foto's uit de ruimte</h3>
+<p>Misschien wel het magischste project uit deze cursus: drie NOAA-weersatellieten en de
+Russische Meteor-serie vliegen in een lage polaire baan rond de aarde en zenden continu hun
+camerabeeld uit op 137&nbsp;MHz — analoog, ontworpen in de jaren zeventig, en met een
+zelfgebouwde antenne van vijf euro aan draad te ontvangen. Een satelliet is per overkomst
+zo'n twaalf minuten te horen; plan de pass met n2yo.com, neem op met SatDump, en je hebt je
+eigen satellietfoto van Europa.</p>
+<figure>
+<img src="assets/noaa19_apt.jpg" alt="Echt ontvangen NOAA-19 beeld">
+<figcaption>Geen stockfoto: een écht met RTL-SDR ontvangen NOAA-19 APT-beeld
+(137,100 MHz, 18 juni 2021). Links zichtbaar licht, rechts infrarood. Public domain (NOAA).</figcaption>
+</figure>
+
+<h3>Het IoT om je heen: rtl_433</h3>
+<p>De 433- en 868-MHz-banden zijn het riool én de goudmijn van de ether: weerstations,
+deurbellen, bandenspanningssensoren, energiemeters — alles kwettert er onversleuteld.
+Het programma <code>rtl_433</code> kent meer dan 250 van die protocollen en spuugt alles uit
+als nette JSON. Eén avond draaien en je weet welk weerstation van wie is, hoe koud het in de
+schuur van de buren is en hoe vaak de kat door het luikje gaat. Die JSON-stroom is bovendien
+het perfecte voer voor les 6.</p>
+
+<h3>En onbekende signalen?</h3>
+<p>Vroeg of laat zie je een streepje in de waterfall dat nergens gedocumenteerd staat. Dan
+begint het echte detectivewerk, en dat volgt altijd hetzelfde stappenplan: signaal vinden en
+opnemen als IQ-bestand → bekijken in inspectrum of URH (welke modulatie? welke symboolrate?) →
+demoduleren naar bits → patronen zoeken (preambles, tellers, checksums) → een decoder
+schrijven. Veel 433-MHz-apparaten gebruiken verbluffend simpele vaste codes — precies de reden
+dat oude autosleutels voor replay-aanvallen vatbaar waren en moderne rolling codes gebruiken.</p>
+<div class="key">🔑 Het denkpatroon <b>kijken → herkennen → decoderen → analyseren</b> is de
+kern van elk SDR-project. De tools wisselen; het patroon nooit.</div>
+
+<p>📻 <em>Welke frequenties verder de moeite zijn? De <a href="index.html#/45">frequentie-safari
+in de slides</a> bevat het complete luistermenu voor Nederland: van DCF77 en The Buzzer op de
+kortegolf tot radiosondes en Meteosat op UHF.</em></p>
+
+<div class="lab">
+<h4>🔬 Lab 5 — Kies je missie (±30 min)</h4>
+<p>Decodeer één echt signaal. Kies de missie die bij je past:</p>
+<ul>
+  <li>✈️ <b>Missie A:</b> <code>dump1090 --interactive</code> — hoeveel vliegtuigen zie je,
+      en wat is je verste ontvangst in kilometers?</li>
+  <li>🌡️ <b>Missie B:</b> <code>rtl_433</code> — identificeer drie apparaten in je omgeving.</li>
+  <li>📟 <b>Missie C:</b> <code>rtl_fm -f 169.65M -s 22050 | multimon-ng -t raw -a FLEX -</code>
+      — tel de P2000-alarmeringen in tien minuten (alleen kijken, niets delen).</li>
+</ul>
+<p>✅ <b>Klaar als</b> je missie echte gedecodeerde data oplevert. <em>Bonus: plan op n2yo.com
+een NOAA-pass van ≥ 60° elevatie en zet je wekker.</em> 🛰️</p>
+</div>
+
+<!-- ================================================================ LES 6 -->
+<h2 id="les6">Les 6 · Data-analyse — van ether naar inzicht</h2>
+<div class="lesmeta">⏱ 30 min + 20 min lab · 🎒 Python met pandas ·
+🎯 na deze les zet je decoderdata om in grafieken en inzichten</div>
+
+<h3>De pipeline</h3>
+<p>Alles wat je tot nu toe deed past in één keten: antenne → IQ-samples → DSP (filteren,
+demoduleren) → decoder → gestructureerde berichten → opslag → analyse. Het krachtige van die
+scheiding is dat elke stap apart te bewaren en te herhalen is. Een IQ-opname kun je eindeloos
+opnieuw analyseren met steeds betere decoders (het standaardformaat daarvoor heet SigMF), en
+de JSON-berichten van je decoder zijn gewoon data zoals een data-analist ze kent.</p>
+
+<h3>IQ-data in Python</h3>
+<p>Je hoeft geen DSP-ingenieur te zijn om met IQ-bestanden te spelen; NumPy maakt het bijna
+huiselijk. Een RTL-SDR-opname laden is twee regels, een waterfall plotten is er drie, en —
+het mooiste — FM-demodulatie is er precies één: <code>np.angle(iq[1:] * np.conj(iq[:-1]))</code>
+berekent het fasverschil tussen opeenvolgende samples, en dat <em>is</em> FM-demodulatie.
+Dit visualiseert die ene regel:</p>
+<figure>
+<img src="assets/fm_demod_chain.png" alt="FM-demodulatie in drie stappen">
+<figcaption>Boven: de audioboodschap. Midden: het FM-gemoduleerde signaal.
+Onder: het resultaat van die ene NumPy-regel — de audio is terug.</figcaption>
+</figure>
+<p>Wil je hier dieper in? Het gratis online boek <a href="https://pysdr.org">PySDR</a> is de
+beste vervolgcursus die er bestaat.</p>
+
+<h3>Berichten analyseren met pandas</h3>
+<p>Decoders produceren JSON; pandas eet JSON. Daarmee wordt radiodata gewoon... data. Twee
+voorbeelden die verrassend veel over je eigen setup vertellen: groepeer ADS-B-ontvangsten per
+kompasrichting en plot de maximale afstand — je ziet letterlijk welk gebouw je antenne
+blokkeert. Of log een etmaal buurt-sensoren en plot de temperatuurcurves — je ziet wie er
+'s nachts stookt.</p>
+<figure>
+<img src="assets/adsb_polar.png" alt="ADS-B bereik per richting" style="max-width:55%">
+<img src="assets/rtl433_log.png" alt="24 uur sensorlog">
+<figcaption>Boven: ADS-B-bereik per richting — de deuk is een flatgebouw.
+Onder: 24 uur temperatuur van drie buurt-sensoren via rtl_433.</figcaption>
+</figure>
+
+<h3>Twee stappen verder</h3>
+<p>Een Raspberry Pi met dongle is een 24/7-meetstation van nog geen vijf watt. Koppel
+<code>rtl_433</code> via MQTT aan InfluxDB en Grafana en je hebt een professioneel dashboard;
+of word onderdeel van citizen-science-netwerken als ADSBexchange en SatNOGS. En wie machine
+learning kent: een spectrogram is gewoon een plaatje, dus alle computer vision-technieken
+werken — automatische modulatieherkenning en zelfs het herkennen van individuele zenders aan
+hun hardware-imperfecties ("RF fingerprinting") zijn actieve onderzoeksvelden waarin je met
+zelf opgenomen trainingsdata direct kunt meedoen.</p>
+
+<div class="lab">
+<h4>🔬 Lab 6 — Van JSON naar inzicht (±20 min)</h4>
+<p>Geen eigen data? Gebruik de oefenset uit deze cursus:
+<a href="assets/sample_rtl433.jsonl">assets/sample_rtl433.jsonl</a> (24 uur, 3 sensoren).</p>
+<pre><code>import pandas as pd
+df = pd.read_json("assets/sample_rtl433.jsonl", lines=True)
+
+print(df.model.value_counts())            # 1. berichten per sensor
+df.pivot_table(index="time", columns="model",
+               values="temperature_C").plot()   # 2. temperatuurverloop
+
+# 3. jouw beurt: wanneer was het koudste moment? welke sensor
+#    hangt binnen? en welke heeft een zwakke batterij?</code></pre>
+<p>✅ <b>Klaar als</b> je plot drie lijnen toont en je vraag 3 met code beantwoordt.</p>
+</div>
+
+<!-- ================================================================ LES 7 -->
+<h2 id="les7">Les 7 · Wetgeving en ethiek</h2>
+<div class="lesmeta">⏱ 15 min + 10 min casussen · 🎯 na deze les weet je wat mag, wat niet,
+en hoe je legaal gaat zenden</div>
+
+<p>De korte samenvatting van het Nederlandse recht past in drie woorden:
+<b>ontvangen vrij · delen beperkt · zenden gereguleerd</b>. De uitwerking:</p>
+
+<p><b>Ontvangen</b> mag in principe altijd — een ontvanger bezitten en gebruiken is vrij.
+Maar wat je opvangt is niet automatisch van jou: niet-openbare communicatie mag je niet delen
+of misbruiken (Telecommunicatiewet), en van afluisteren van bijvoorbeeld telefonie moet je
+sowieso wegblijven. Praktisch: omroep, luchtvaart, zendamateurs, satellieten, sensoren en
+ADS-B zijn allemaal prima; bij P2000 geldt: meelezen gedoogd, maar berichten met
+persoonsgegevens publiceren is een AVG-overtreding.</p>
+
+<p><b>Zenden</b> zonder toestemming is verboden en wordt gehandhaafd door de RDI
+(Rijksinspectie Digitale Infrastructuur). Legaal zenden kan op twee manieren: met
+<em>conforme apparatuur</em> in de vergunningsvrije banden (wifi, PMR446, 433/868 MHz — let
+op: een HackRF is géén conform apparaat), of met een <b>amateurradiolicentie</b>. Die laatste
+is de koninklijke weg: het N-examen is goed te doen, je krijgt een eigen roepnaam, en
+experimenteren op de amateurbanden is daar niet alleen toegestaan maar zelfs het hele idee.
+Kijk bij <a href="https://www.veron.nl">VERON</a> voor cursussen — of vraag rond in de
+hackerspace.</p>
+
+<p><b>Ethiek</b> ten slotte: SDR geeft je toegang tot veel, en daar hoort volwassenheid bij.
+Eigen apparaten onderzoeken, open signalen decoderen, publiceren over techniek: doen. Jammen,
+replay-aanvallen op andermans spullen, GPS spoofen, persoonsgegevens verspreiden: nooit. Vind
+je een kwetsbaarheid in een product, meld die dan netjes bij de fabrikant of het NCSC
+(responsible disclosure).</p>
+
+<div class="lab">
+<h4>🔬 Lab 7 — Mag dit? (±10 min)</h4>
+<p>Oordeel eerst zelf, klap dan het antwoord open:</p>
+<details><summary>1. Je leest met rtl_433 het weerstation van de buren uit.</summary>
+<b style="color:var(--ok)">Mag.</b> Vrij ontvangbaar, geen persoonsgegevens. Netjes: vertel
+het ze — gegarandeerd een leuk gesprek.</details>
+<details><summary>2. Je zet P2000-meldingen mét adressen op social media.</summary>
+<b style="color:var(--warn)">Mag niet.</b> Persoonsgegevens verspreiden: AVG plus
+Telecommunicatiewet.</details>
+<details><summary>3. Je test je HackRF "heel even" op 433,92 MHz met 1 mW.</summary>
+<b style="color:var(--warn)">Mag niet.</b> De ISM-band vereist conforme apparatuur; een HackRF
+is dat niet. Dummy load of kabel!</details>
+<details><summary>4. Met je N-licentie roep je CQ op 145,500 MHz.</summary>
+<b style="color:var(--ok)">Mag.</b> Daar is die licentie voor — vergeet alleen je roepnaam
+niet.</details>
+</div>
+
+<!-- ================================================================ LES 8 -->
+<h2 id="les8">Les 8 · Eindopdracht — jouw eigen station</h2>
+<div class="lesmeta">⏱ 2 weken · 🎒 alles uit les 1–7 ·
+🎯 een werkend ontvangststation, 48 uur data en een verhaal van 5 minuten</div>
+
+<p>Alles komt samen in de capstone. Je bouwt een ontvangststation rond een zelfgekozen doel —
+vliegtuigen, een weersatelliet, de sensoren in je straat, of iets geks zoals radiosondes van
+weerballonnen — en je laat het minstens 48 uur draaien. Je documenteert je antennekeuze met de
+λ/4-regel uit les 1, logt je data zoals in les 6, en maakt er één grafiek en één verhaal van:
+wat verraste je? Dat presenteer je in vijf minuten in de hackerspace, <em>inclusief wat er
+misging</em> — want dat is altijd het leerzaamste deel.</p>
+
+<p>Beoordeel jezelf op twee vragen: draait het 48 uur stabiel, en kun je elke ontwerpkeuze
+uitleggen? Twee keer ja? Dan ben je officieel SDR-hobbyist.</p>
+
+<figure>
+<img src="assets/discone_photo.jpg" alt="Discone antenne op dak" style="max-width:45%">
+<figcaption>Zo kan je eindopdracht eruitzien: breedband-discone plus weerstation op het dak.
+Foto: mr_t_77, CC BY-SA 2.0.</figcaption>
+</figure>
+
+<h3>Hoe verder na deze cursus</h3>
+<table>
+  <tr><th>Wanneer</th><th>Doe dit</th></tr>
+  <tr><td>Vandaag</td><td>FM ontvangen in SDR++ (lab 3)</td></tr>
+  <tr><td>Deze week</td><td>vliegtuigen volgen met dump1090; sensoren met rtl_433</td></tr>
+  <tr><td>Deze maand</td><td>eigen weersatellietfoto (V-dipool + SatDump); capstone</td></tr>
+  <tr><td>Daarna</td><td>GNU Radio verdieping, PySDR doorwerken, N-licentie halen</td></tr>
+</table>
+
+<h3>Spiekbrief</h3>
+<table>
+  <tr><th>Frequentie</th><th>Wat</th></tr>
+  <tr><td>87,5–108 MHz</td><td>FM-omroep</td></tr>
+  <tr><td>118–137 MHz</td><td>luchtvaart (AM!)</td></tr>
+  <tr><td>137 MHz</td><td>NOAA / Meteor weersatellieten</td></tr>
+  <tr><td>144 / 430 MHz</td><td>zendamateurs</td></tr>
+  <tr><td>169,65 MHz</td><td>P2000</td></tr>
+  <tr><td>433,92 / 868 MHz</td><td>sensoren (ISM)</td></tr>
+  <tr><td>1090 MHz</td><td>ADS-B</td></tr>
+</table>
+<p>Formules: λ(m) ≈ 300/f(MHz) · zichtbare bandbreedte = samplerate · +3 dB = ×2 vermogen.<br>
+Bronnen: <a href="https://pysdr.org">pysdr.org</a> · <a href="https://www.rtl-sdr.com">rtl-sdr.com</a> ·
+<a href="https://www.sigidwiki.com">sigidwiki.com</a> · r/RTLSDR · VERON.</p>
+
+<p class="top"><a href="#les1">↑ naar boven</a></p>
+</main>
+
+<footer>
+  📻 SDR-cursus · Rein Velt · Hackerspace Drenthe ·
+  <a href="index.html">slides</a> · <a href="https://github.com/ReinVelt/SDR-voor-beginners">GitHub</a><br>
+  Tekst: CC BY-SA 4.0 · foto-credits bij de afbeeldingen
+</footer>
+</body>
+</html>

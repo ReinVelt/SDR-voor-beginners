@@ -2,7 +2,9 @@
 
 **Rein Velt · [Hackerspace Drenthe](https://hackerspacedrenthe.nl)**
 
-**Live:** https://reinvelt.github.io/SDR-voor-beginners/
+**Live:**
+- 📖 **Cursusboek** (leesversie met volledige uitleg en verhaal): https://reinvelt.github.io/SDR-voor-beginners/cursus.html
+- 📽 **Slides** (klassikaal / interactieve demo's): https://reinvelt.github.io/SDR-voor-beginners/
 
 Interactieve hands-on [Reveal.js](https://revealjs.com)-cursus (Nederlands) over Software Defined Radio,
 voor beginners én gevorderden. 66 slides met live canvas-animaties, interactieve
