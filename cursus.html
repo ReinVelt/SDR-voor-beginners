@@ -884,12 +884,43 @@ aan de <em>andere</em> kant van de LO levert precies dezelfde MF op — de
 zit). Daarom zit er vóór de mixer altijd een filter. Herken je de examenvraag: LO op
 14,7&nbsp;MHz, MF 455&nbsp;kHz, signaal 14,245&nbsp;MHz → spiegel op 15,155&nbsp;MHz.</p>
 
-<h3>SSB en bandbreedtes</h3>
-<p>AM verspilt: de draaggolf bevat geen informatie en de twee zijbanden zijn elkaars kopie.
-<b>SSB</b> (enkelzijband) stuurt alleen één zijband — drie keer efficiënter, en dé
-spraakmodus op de amateurbanden (onder de 10&nbsp;MHz traditioneel LSB, erboven USB). De
-prijs: zonder draaggolf moet je ontvanger exact afstemmen, anders klinkt alles als Donald
-Duck — precies wat je in lab&nbsp;1 hoorde. Bandbreedtes die je moet kennen:</p>
+<h3>SSB, USB en LSB: zijbanden begrijpen</h3>
+<p>Waar komen die "zijbanden" eigenlijk vandaan? Als je audio (zeg 300–3000&nbsp;Hz) op een
+draaggolf mengt, ontstaan er <em>twee</em> kopieën: de som (draaggolf + audiofrequentie,
+de <b>bovenzijband of USB</b>, upper sideband) en het verschil (draaggolf − audiofrequentie,
+de <b>onderzijband of LSB</b>, lower sideband — een <em>gespiegelde</em> kopie!). Klassieke
+AM zendt beide zijbanden plus de draaggolf uit. Dat is robuust maar verspillend: de
+draaggolf bevat nul informatie en slokt ~twee derde van het vermogen op, en de twee
+zijbanden vertellen exact hetzelfde verhaal.</p>
+<p><b>SSB</b> (single sideband) gooit alles weg wat dubbel is: draaggolf eruit, één zijband
+eruit, en wat overblijft is pure informatie in ~2,7&nbsp;kHz. Drie keer zuiniger in
+vermogen en meer dan twee keer smaller — dé reden dat spraak op de amateurbanden vrijwel
+altijd SSB is. Afspraak onder amateurs: <b>onder de 10&nbsp;MHz LSB, erboven USB</b> (een
+historisch overblijfsel van hoe de eerste SSB-zenders gebouwd waren).</p>
+<p>De prijs van die efficiëntie: zonder draaggolf weet je ontvanger niet meer wáár de audio
+precies "begon". Je ontvanger moet de draaggolf zelf bijmengen, en stem je 100&nbsp;Hz
+ernaast, dan verschuift <em>alle</em> audio met exact 100&nbsp;Hz. Niet een beetje vals —
+alle toonverhoudingen breken (boventonen zijn niet langer veelvouden van de grondtoon), en
+dát is het beroemde Donald Duck-effect uit lab&nbsp;1. Bij AM gebeurt dit niet: de
+meegezonden draaggolf "kalibreert" de ontvanger vanzelf. Speel ermee:</p>
+
+<div class="demo">
+  <canvas id="cSSB" width="900" height="330"></canvas>
+  <div class="dbar">
+    <label>modus</label>
+    <select id="cSSBmode">
+      <option value="am">AM (draaggolf + 2 zijbanden)</option>
+      <option value="dsb">DSB (zijbanden, geen draaggolf)</option>
+      <option value="lsb">LSB (alleen onderzijband)</option>
+      <option value="usb" selected>USB (alleen bovenzijband)</option>
+    </select>
+    <label>afstemfout</label><input type="range" id="cSSBoff" min="-300" max="300" value="0" step="10">
+    <span class="dval" id="cSSBoffv">0 Hz</span>
+    <button id="cSSBplay">🔊 luister A/B</button>
+  </div>
+  <p class="dcap">🎛️ Boven: de spraak (bewegende bult). Onder: wat er de ether in gaat — zie de LSB <b>gespiegeld</b> meebewegen. Grijs gestreept = wat SSB wegfiltert. Zet een afstemfout en druk op <b>luister</b>: eerst 1,5 s perfect afgestemd, dan jouw fout. Bij AM blijft de toonhoogte gelijk (draaggolf kalibreert!), bij LSB/USB hoor je Donald Duck — en bij LSB de andere kant op!</p>
+</div>
+<p>Tot slot de bandbreedtes die je voor het examen moet kennen:</p>
 <table>
   <tr><th>Modus</th><th>Bandbreedte (orde)</th><th>Gebruik</th></tr>
   <tr><td>CW (morse)</td><td>~500 Hz</td><td>komt door waar niets anders doorkomt</td></tr>
@@ -1039,6 +1070,129 @@ function spelUpdate() {
   $('cSpelOut').textContent = [...txt].map(c => NATO[c] || (c === ' ' ? ' · ' : c)).join(' ');
 }
 if ($('cSpelT')) { $('cSpelT').addEventListener('input', spelUpdate); spelUpdate(); }
+
+/* ---- les 9: SSB/USB/LSB zijband-studio ---- */
+const ssbAudio = { ctx: null, playing: false };
+$('cSSBoff')?.addEventListener('input', () => {
+  $('cSSBoffv').textContent = (+$('cSSBoff').value > 0 ? '+' : '') + $('cSSBoff').value + ' Hz';
+});
+$('cSSBplay')?.addEventListener('click', () => {
+  if (ssbAudio.playing) return;
+  ssbAudio.ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+  const ctx = ssbAudio.ctx; ctx.resume();
+  ssbAudio.playing = true;
+  const btn = $('cSSBplay'); btn.textContent = '🔈 A (goed) …'; btn.classList.add('on');
+  const mode = $('cSSBmode').value, off = +$('cSSBoff').value;
+  // "stem": grondtoon + harmonischen, met lettergreep-envelop
+  const HARM = [[220, .5], [440, .35], [660, .22], [880, .12]];
+  const master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+  const oscs = HARM.map(([f, a]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = f; g.gain.value = a;
+    o.connect(g).connect(master); o.start();
+    return o;
+  });
+  const t0 = ctx.currentTime + 0.05, dur = 1.5;
+  // lettergreep-envelop (4 "syllabes" per seconde)
+  for (let seg = 0; seg < 2; seg++) {
+    for (let k = 0; k < 6; k++) {
+      const ts = t0 + seg * dur + k * 0.25;
+      master.gain.setTargetAtTime(0.35, ts, 0.03);
+      master.gain.setTargetAtTime(0.02, ts + 0.15, 0.04);
+    }
+  }
+  // segment B: afstemfout toepassen — AM: géén verschuiving (envelopdetectie);
+  // SSB: constante verschuiving van ALLE frequenties; LSB: spiegel → tegengesteld teken
+  const shift = mode === 'am' ? 0 : (mode === 'lsb' ? -off : off);
+  oscs.forEach((o, i) => {
+    o.frequency.setValueAtTime(HARM[i][0], t0 + dur);
+    o.frequency.setValueAtTime(Math.max(30, HARM[i][0] + shift), t0 + dur + 0.001);
+  });
+  setTimeout(() => { btn.textContent = '🔉 B (' + (mode === 'am' ? 'AM: geen effect!' : (off ? off + ' Hz ernaast' : 'ook goed')) + ') …'; }, (dur + 0.05) * 1000);
+  setTimeout(() => {
+    master.gain.setTargetAtTime(0, ctx.currentTime, 0.03);
+    oscs.forEach(o => o.stop(ctx.currentTime + 0.2));
+    btn.textContent = '🔊 luister A/B'; btn.classList.remove('on');
+    ssbAudio.playing = false;
+  }, (2 * dur + 0.15) * 1000);
+});
+reg('cSSB', cv => {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const AUD_Y = 92, RF_Y = h - 58;           // basislijnen van de twee spectra
+  const FMAX = 3000;                          // audio-as tot 3 kHz
+  const span = 4000;                          // RF-as: fc ± 4 kHz
+  const cx = w * 0.56;                        // x-positie van de draaggolf
+  const sc = (w * 0.40) / span;               // px per Hz op de RF-as
+  const audX = f => 60 + f / FMAX * (w * 0.33);
+  const hump = (x, c, wdt) => Math.exp(-((x - c) ** 2) / (2 * wdt * wdt));
+  return t => {
+    const mode = $('cSSBmode').value, off = +$('cSSBoff').value;
+    // "spraak": formant-bult die heen en weer glijdt + vaste lage component
+    const fv = 1100 + 850 * Math.sin(0.9 * t) + 250 * Math.sin(2.3 * t);
+    const spec = f => 0.85 * hump(f, fv, 330) + 0.5 * hump(f, 420, 180);
+    g.fillStyle = '#0a0f1a'; g.fillRect(0, 0, w, h);
+    g.font = '14px sans-serif';
+
+    // ---- bovenste as: audio in ----
+    g.fillStyle = '#9ab'; g.fillText('🎤 audio in (de boodschap)', 60, 22);
+    g.strokeStyle = '#444'; g.beginPath(); g.moveTo(55, AUD_Y); g.lineTo(60 + w * 0.33 + 10, AUD_Y); g.stroke();
+    g.strokeStyle = '#66bb6a'; g.lineWidth = 2; g.beginPath();
+    for (let f = 0; f <= FMAX; f += 20) {
+      const x = audX(f), y = AUD_Y - spec(f) * 55;
+      f ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke(); g.lineWidth = 1;
+    g.fillStyle = '#678'; g.fillText('0', audX(0) - 4, AUD_Y + 16);
+    g.fillText('3 kHz', audX(FMAX) - 16, AUD_Y + 16);
+
+    // ---- onderste as: RF uit ----
+    g.fillStyle = '#9ab'; g.fillText('📡 wat de ether in gaat (rond de draaggolffrequentie f\u1d04)', 60, RF_Y - 118);
+    g.strokeStyle = '#444'; g.beginPath(); g.moveTo(cx - span * sc - 12, RF_Y); g.lineTo(cx + span * sc + 12, RF_Y); g.stroke();
+    const drawSB = (sign, actief) => {       // sign +1 = USB, -1 = LSB (gespiegeld)
+      g.strokeStyle = actief ? (sign > 0 ? '#4fc3f7' : '#ffb74d') : '#49505a';
+      g.setLineDash(actief ? [] : [5, 5]); g.lineWidth = actief ? 2.2 : 1.4;
+      g.beginPath();
+      for (let f = 0; f <= FMAX; f += 20) {
+        const x = cx + sign * f * sc, y = RF_Y - spec(f) * 88;
+        f ? g.lineTo(x, y) : g.moveTo(x, y);
+      }
+      g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+    };
+    const hasCarrier = mode === 'am';
+    drawSB(-1, mode === 'am' || mode === 'dsb' || mode === 'lsb');
+    drawSB(+1, mode === 'am' || mode === 'dsb' || mode === 'usb');
+    // draaggolf
+    if (hasCarrier) {
+      g.strokeStyle = '#ef5350'; g.lineWidth = 3;
+      g.beginPath(); g.moveTo(cx, RF_Y); g.lineTo(cx, RF_Y - 105); g.stroke(); g.lineWidth = 1;
+      g.fillStyle = '#ef5350'; g.fillText('draaggolf', cx - 28, RF_Y - 112);
+    } else {
+      g.strokeStyle = '#49505a'; g.setLineDash([4, 5]);
+      g.beginPath(); g.moveTo(cx, RF_Y); g.lineTo(cx, RF_Y - 105); g.stroke(); g.setLineDash([]);
+      g.fillStyle = '#678'; g.fillText('(fc, onderdrukt)', cx - 42, RF_Y - 112);
+    }
+    g.fillStyle = '#678';
+    g.fillText('LSB (spiegel!) ⟵', cx - span * sc + 4, RF_Y + 17);
+    g.fillText('⟶ USB', cx + span * sc - 52, RF_Y + 17);
+    // ontvanger-afstemming
+    if (off !== 0) {
+      const rx = cx + off * sc * 4;           // visueel uitvergroot
+      g.strokeStyle = '#ffd54f'; g.setLineDash([3, 4]);
+      g.beginPath(); g.moveTo(rx, RF_Y); g.lineTo(rx, RF_Y - 95); g.stroke(); g.setLineDash([]);
+      g.fillStyle = '#ffd54f';
+      g.fillText('ontvanger denkt dat fc híer is (' + (off > 0 ? '+' : '') + off + ' Hz)', rx - 90, RF_Y - 100);
+    }
+    // uitleg per modus
+    const info = {
+      am:  ['bandbreedte ~6 kHz · draaggolf slokt ~⅔ van het vermogen', '#ef5350'],
+      dsb: ['bandbreedte nog steeds ~6 kHz · vermogen nu alléén in spraak', '#9ab'],
+      lsb: ['bandbreedte ~2,7 kHz · gespiegeld spectrum · afspraak: onder 10 MHz', '#ffb74d'],
+      usb: ['bandbreedte ~2,7 kHz · alle vermogen in één zijband · boven 10 MHz', '#4fc3f7'],
+    }[mode];
+    g.fillStyle = info[1]; g.font = '15px sans-serif';
+    g.fillText(info[0], 60, h - 10);
+  };
+});
 
 /* ---- les 1: golf met frequentie/amplitude ---- */
 reg('cWave', cv => {
